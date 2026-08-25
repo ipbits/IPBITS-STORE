@@ -25,7 +25,7 @@ const PRODUCTS = [
   { id: 'netflix', name: 'Netflix Premium', priceIQD: 7000, category: 'فلم و زنجیرە', badge: 'پرۆفایلێ تایبەت' },
   { id: 'elevenlabs', name: 'ElevenLabs AI', priceIQD: 26250, category: 'دەنگێ AI', badge: 'فەرمی' },
   { id: 'kling', name: 'Kling AI Video', priceIQD: 21000, category: 'ڤیدیۆیا AI', badge: 'فەرمی' },
-  { id: 'paypal_acc', name: 'چێکرنا ئەکاونتێن پەیپال (PayPal)', priceIQD: 20000, category: 'خزمەتگوزاری دارایی', badge: 'تایبەت و پشکنین' },
+  { id: 'paypal_acc', name: 'چێکرنا ئەکاونتێن پەیپال (PayPal)', priceIQD: 750000, category: 'خزمەتگوزاری دارایی', badge: 'تایبەت و پشکنین' },
   // ئۆفەرێن تایبەت (Bundles)
   { id: 'bundle_ai', name: 'پاکێجا AI VIP (ChatGPT + Claude)', priceIQD: 63000, category: 'ئۆفەرێ تایبەت', badge: 'داشکاندن 🔥', isBundle: true },
   { id: 'bundle_creator', name: 'پاکێجا دروستکەران (Canva + ElevenLabs)', priceIQD: 31500, category: 'ئۆفەرێ تایبەت', badge: 'داشکاندن 🔥', isBundle: true }

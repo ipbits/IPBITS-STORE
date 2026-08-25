@@ -17,6 +17,19 @@ const IPBitsLogo = () => (
 // -------------------------------------------------------------
 // لیستا بەرهەم و پشکدارییان (تنێ ب بهایێ دیناری IQD)
 const PRODUCTS = [
+  // پشکداریا نوی یا گشتگیر ل دەستپێکێ زێدە بکە
+  { 
+    id: 'all_in_one_ai', 
+    name: 'پاکێجا گشتگیر یا AI (زیاد ژ 50 مۆدێلان)', 
+    priceIQD: 15000, 
+    category: 'ئۆفەرێ تایبەت', 
+    badge: 'پڕفرۆشترین 🔥', 
+    isBundle: true 
+  },
+
+  // بەرهەمێن دی یێن تە...
+  { id: 'chatgpt', name: 'ChatGPT Plus', priceIQD: 35000, category: 'هاریکارێ AI', badge: 'فەرمی' },
+  // ...
   // ژیرییا دەستکرد (AI)
   { id: 'chatgpt', name: 'ChatGPT Plus', priceIQD: 35000, category: 'هاریکارێ AI', badge: 'فەرمی' },
   { id: 'claude', name: 'Claude Pro', priceIQD: 35000, category: 'هاریکارێ AI', badge: 'فەرمی' },

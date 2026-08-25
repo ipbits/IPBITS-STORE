@@ -15,27 +15,21 @@ const IPBitsLogo = () => (
 );
 
 // -------------------------------------------------------------
-// نرخی گۆڕینەوەی دۆلار بۆ دینار (سیکا کوردستانێ + پەرژینێ ئەمانێ)
-const EXCHANGE_RATE = 1750; 
-
-// لیستا بەرهەم و پشکدارییان (نرخ ب دۆلارە و دینار ب ئۆتۆماتیک دهێتە هەژمارتن)
-const RAW_PRODUCTS = [
-  { id: 'chatgpt', name: 'ChatGPT Plus', priceUSD: 20, category: 'هاریکارێ AI', badge: 'فەرمی' },
-  { id: 'claude', name: 'Claude Pro', priceUSD: 20, category: 'هاریکارێ AI', badge: 'فەرمی' },
-  { id: 'canva', name: 'Canva Pro', priceUSD: 5, category: 'دیزاین', badge: 'تایبەت / تیم' },
-  { id: 'netflix', name: 'Netflix Premium', priceUSD: 4, category: 'فلم و زنجیرە', badge: 'پرۆفایلێ تایبەت' },
-  { id: 'elevenlabs', name: 'ElevenLabs AI', priceUSD: 15, category: 'دەنگێ AI', badge: 'فەرمی' },
-  { id: 'kling', name: 'Kling AI Video', priceUSD: 12, category: 'ڤیدیۆیا AI', badge: 'فەرمی' },
+// لیستا بەرهەم و پشکدارییان تنێ ب بهایێ دیناری (IQD)
+const PRODUCTS = [
+  { id: 'chatgpt', name: 'ChatGPT Plus', priceIQD: 35000, category: 'هاریکارێ AI', badge: 'فەرمی' },
+  { id: 'claude', name: 'Claude Pro', priceIQD: 35000, category: 'هاریکارێ AI', badge: 'فەرمی' },
+  { id: 'google_flow', name: 'گووگڵ فڵۆ (Google Flow AI)', priceIQD: 25000, category: 'هاریکارێ AI', badge: 'فەرمی' },
+  { id: 'canva', name: 'Canva Pro', priceIQD: 8750, category: 'دیزاین', badge: 'تایبەت / تیم' },
+  { id: 'apple_music', name: 'ئەپڵ میوزیک (Apple Music)', priceIQD: 7000, category: 'موزیک و دەنگ', badge: 'فەرمی' },
+  { id: 'netflix', name: 'Netflix Premium', priceIQD: 7000, category: 'فلم و زنجیرە', badge: 'پرۆفایلێ تایبەت' },
+  { id: 'elevenlabs', name: 'ElevenLabs AI', priceIQD: 26250, category: 'دەنگێ AI', badge: 'فەرمی' },
+  { id: 'kling', name: 'Kling AI Video', priceIQD: 21000, category: 'ڤیدیۆیا AI', badge: 'فەرمی' },
+  { id: 'paypal_acc', name: 'چێکرنا ئەکاونتێن پەیپال (PayPal)', priceIQD: 20000, category: 'خزمەتگوزاری دارایی', badge: 'تایبەت و پشکنین' },
   // ئۆفەرێن تایبەت (Bundles)
-  { id: 'bundle_ai', name: 'پاکێجا AI VIP (ChatGPT + Claude)', priceUSD: 36, category: 'ئۆفەرێ تایبەت', badge: 'داشکاندن 🔥', isBundle: true },
-  { id: 'bundle_creator', name: 'پاکێجا دروستکەران (Canva + ElevenLabs)', priceUSD: 18, category: 'ئۆفەرێ تایبەت', badge: 'داشکاندن 🔥', isBundle: true }
+  { id: 'bundle_ai', name: 'پاکێجا AI VIP (ChatGPT + Claude)', priceIQD: 63000, category: 'ئۆفەرێ تایبەت', badge: 'داشکاندن 🔥', isBundle: true },
+  { id: 'bundle_creator', name: 'پاکێجا دروستکەران (Canva + ElevenLabs)', priceIQD: 31500, category: 'ئۆفەرێ تایبەت', badge: 'داشکاندن 🔥', isBundle: true }
 ];
-
-// هەژمارتنا بهایێ دیناری ب ئۆتۆماتیک بۆ هەمی بەرهەمان
-const PRODUCTS = RAW_PRODUCTS.map(item => ({
-  ...item,
-  priceIQD: Math.round(item.priceUSD * EXCHANGE_RATE)
-}));
 
 // زانیاریێن ئەکاونتێن پارەدانێ
 const PAYMENT_ACCOUNTS = {
@@ -100,7 +94,6 @@ export default function StorePage() {
     setCart(cart.filter((item) => item.id !== id));
   };
 
-  const totalUSD = cart.reduce((acc, curr) => acc + curr.priceUSD, 0);
   const totalIQD = cart.reduce((acc, curr) => acc + curr.priceIQD, 0);
 
   const copyPaymentNumber = () => {
@@ -147,7 +140,6 @@ export default function StorePage() {
     const orderDetails = {
       ...formData,
       items: cart.map(i => i.name).join(', '),
-      totalUSD,
       totalIQD,
       image: fileBase64 ? { base64: fileBase64, type: fileType } : null
     };
@@ -180,7 +172,7 @@ export default function StorePage() {
 
   const sendToWhatsApp = () => {
     if (!lastOrder) return;
-    const msg = `سڵاڤ، من داخوازییەک تۆمار کر ل IPBITS STORE:%0A%0A👤 ناڤ: ${lastOrder.name}%0A📱 ژمارە: ${lastOrder.phone}%0A📦 پشکداری: ${lastOrder.items}%0A💰 کۆم: ${lastOrder.totalIQD.toLocaleString()} IQD ($${lastOrder.totalUSD})%0A💳 رێکا پارەدانێ: ${lastOrder.paymentMethod}%0A🧾 کۆدێ وەسڵێ: ${lastOrder.transactionId}`;
+    const msg = `سڵاڤ، من داخوازییەک تۆمار کر ل IPBITS STORE:%0A%0A👤 ناڤ: ${lastOrder.name}%0A📱 ژمارە: ${lastOrder.phone}%0A📦 پشکداری: ${lastOrder.items}%0A💰 کۆم: ${lastOrder.totalIQD.toLocaleString()} IQD%0A💳 رێکا پارەدانێ: ${lastOrder.paymentMethod}%0A🧾 کۆدێ وەسڵێ: ${lastOrder.transactionId}`;
     window.open(`https://wa.me/9647504060378?text=${msg}`, '_blank');
   };
 
@@ -263,7 +255,6 @@ export default function StorePage() {
                     <h3 className="text-lg font-bold text-white mb-2">{product.name}</h3>
                     <div className="flex items-row items-baseline gap-2 mb-6">
                       <span className="text-2xl font-black text-white">{product.priceIQD.toLocaleString()} IQD</span>
-                      <span className="text-xs text-slate-400 font-semibold">/ ${product.priceUSD}</span>
                     </div>
                   </div>
 
@@ -352,10 +343,6 @@ export default function StorePage() {
                 )}
 
                 <div className="bg-slate-950/90 p-4 rounded-2xl border border-slate-800/80 mb-5">
-                  <div className="flex justify-between text-xs text-slate-400 mb-1 font-medium">
-                    <span>کۆمێ گشتی:</span>
-                    <span>${totalUSD}</span>
-                  </div>
                   <div className="flex justify-between text-base font-extrabold text-white">
                     <span>کۆمێ ب دینار:</span>
                     <span className="text-purple-400 font-black">{totalIQD.toLocaleString()} IQD</span>

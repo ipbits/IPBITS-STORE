@@ -24,9 +24,10 @@ const PRODUCTS = [
   { id: 'elevenlabs', name: 'ElevenLabs AI', priceIQD: 26250, category: 'دەنگێ AI', badge: 'فەرمی' },
   { id: 'kling', name: 'Kling AI Video', priceIQD: 21000, category: 'ڤیدیۆیا AI', badge: 'فەرمی' },
 
-  // دیزاین و خزمەتگوزاریێن دارایی
+  // مۆنتاژ، دیزاین و خزمەتگوزاریێن دارایی
+  { id: 'capcut', name: 'کاپ کات پرۆ (CapCut Pro)', priceIQD: 15000, category: 'مۆنتاژ و ڤیدیۆ', badge: 'فەرمی' },
   { id: 'canva', name: 'Canva Pro', priceIQD: 8750, category: 'دیزاین', badge: 'تایبەت / تیم' },
-  { id: 'paypal_acc', name: 'چێکرنا ئەکاونتێن پەیپال (PayPal)', priceIQD: 75000, category: 'خزمەتگوزاری دارایی', badge: 'تایبەت و پشکنین' },
+  { id: 'paypal_acc', name: 'چێکرنا ئەکاونتێن پەیپال (PayPal)', priceIQD: 20000, category: 'خزمەتگوزاری دارایی', badge: 'تایبەت و پشکنین' },
 
   // سینەما، فلم و زنجیرە
   { id: 'netflix', name: 'Netflix Premium', priceIQD: 7000, category: 'فلم و زنجیرە', badge: 'پرۆفایلێ تایبەت' },
@@ -49,7 +50,9 @@ const PRODUCTS = [
 const PAYMENT_ACCOUNTS = {
   FIB: { title: 'First Iraqi Bank (FIB)', number: '07504060378', note: 'یان دناڤ ئەپا FIB بنڤیسە: IPBITS' },
   FastPay: { title: 'FastPay Wallet', number: '07504060378', note: 'ژمارا وەسڵێ پشتی پارەدانێ بنڤیسە' },
-  ZainCash: { title: 'Zain Cash', number: '07800000000', note: 'ژمارا وەسڵێ د فۆرمێ دا بنڤیسە' }
+  ZainCash: { title: 'Zain Cash', number: '07800000000', note: 'ژمارا وەسڵێ د فۆرمێ دا بنڤیسە' },
+  PayPal: { title: 'PayPal', number: 'peshwarfarhad@gmail.com', note: 'پارەی ب شێوەیێ Friends & Family بنێرە و ناڤێ خۆ بنڤیسە' },
+  USDT: { title: 'USDT (TRC20)', number: 'TYu8VnXXXXXXXXXXXXXXXXXXXXX', note: 'تەنێ ل سەر تۆڕا Tron (TRC20) فرێکە و TxID بنڤیسە' }
 };
 
 export default function StorePage() {
@@ -398,17 +401,19 @@ export default function StorePage() {
                       <option value="FIB">First Iraqi Bank (FIB)</option>
                       <option value="FastPay">FastPay Wallet</option>
                       <option value="ZainCash">Zain Cash</option>
+                      <option value="PayPal">PayPal</option>
+                      <option value="USDT">USDT (TRC20 Crypto)</option>
                     </select>
 
                     <div className="mt-2 bg-purple-950/40 border border-purple-800/40 rounded-xl p-2.5 flex items-center justify-between text-xs">
-                      <div>
-                        <span className="text-[10px] text-purple-300 block">ژمارا فرێکرنا پارەی:</span>
-                        <span className="font-bold text-white tracking-wider">{PAYMENT_ACCOUNTS[formData.paymentMethod]?.number}</span>
+                      <div className="truncate max-w-[200px]">
+                        <span className="text-[10px] text-purple-300 block">{PAYMENT_ACCOUNTS[formData.paymentMethod]?.note || 'ناڤنیشان / ژمارا پارەدانێ:'}</span>
+                        <span className="font-bold text-white tracking-wider text-[11px] truncate block">{PAYMENT_ACCOUNTS[formData.paymentMethod]?.number}</span>
                       </div>
                       <button
                         type="button"
                         onClick={copyPaymentNumber}
-                        className="bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 px-2.5 py-1 rounded-lg text-[11px] font-semibold flex items-center gap-1 transition-all"
+                        className="bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 px-2.5 py-1 rounded-lg text-[11px] font-semibold flex items-center gap-1 transition-all shrink-0"
                       >
                         {copied ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
                         <span>{copied ? 'هاتە کۆپیکرن' : 'کۆپی بکە'}</span>
@@ -417,11 +422,11 @@ export default function StorePage() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">کۆدێ وەسڵێ (Transaction ID)</label>
+                    <label className="block text-xs font-semibold text-slate-300 mb-1">کۆدێ وەسڵێ (Transaction ID / TxID / ئیمەیل)</label>
                     <input
                       required
                       type="text"
-                      placeholder="کۆدێ وەسڵا پارەدانێ بنڤیسە..."
+                      placeholder="کۆدێ وەسڵا پارەدانێ یان ترانزاکشن بنڤیسە..."
                       className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-purple-500 text-white"
                       value={formData.transactionId}
                       onChange={(e) => setFormData({ ...formData, transactionId: e.target.value })}

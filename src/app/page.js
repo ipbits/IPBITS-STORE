@@ -15,21 +15,34 @@ const IPBitsLogo = () => (
 );
 
 // -------------------------------------------------------------
-// لیستا بەرهەم و پشکدارییان تنێ ب بهایێ دیناری (IQD)
+// لیستا بەرهەم و پشکدارییان (تنێ ب بهایێ دیناری IQD)
 const PRODUCTS = [
+  // ژیرییا دەستکرد (AI)
   { id: 'chatgpt', name: 'ChatGPT Plus', priceIQD: 35000, category: 'هاریکارێ AI', badge: 'فەرمی' },
   { id: 'claude', name: 'Claude Pro', priceIQD: 35000, category: 'هاریکارێ AI', badge: 'فەرمی' },
   { id: 'google_flow', name: 'گووگڵ فڵۆ (Google Flow AI)', priceIQD: 25000, category: 'هاریکارێ AI', badge: 'فەرمی' },
-  { id: 'canva', name: 'Canva Pro', priceIQD: 8750, category: 'دیزاین', badge: 'تایبەت / تیم' },
-  { id: 'apple_music', name: 'ئەپڵ میوزیک (Apple Music)', priceIQD: 7000, category: 'موزیک و دەنگ', badge: 'فەرمی' },
-  { id: 'netflix', name: 'Netflix Premium', priceIQD: 7000, category: 'فلم و زنجیرە', badge: 'پرۆفایلێ تایبەت' },
   { id: 'elevenlabs', name: 'ElevenLabs AI', priceIQD: 26250, category: 'دەنگێ AI', badge: 'فەرمی' },
   { id: 'kling', name: 'Kling AI Video', priceIQD: 21000, category: 'ڤیدیۆیا AI', badge: 'فەرمی' },
+
+  // دیزاین و خزمەتگوزاریێن دارایی
+  { id: 'canva', name: 'Canva Pro', priceIQD: 8750, category: 'دیزاین', badge: 'تایبەت / تیم' },
   { id: 'paypal_acc', name: 'چێکرنا ئەکاونتێن پەیپال (PayPal)', priceIQD: 75000, category: 'خزمەتگوزاری دارایی', badge: 'تایبەت و پشکنین' },
+
+  // سینەما، فلم و زنجیرە
+  { id: 'netflix', name: 'Netflix Premium', priceIQD: 7000, category: 'فلم و زنجیرە', badge: 'پرۆفایلێ تایبەت' },
+  { id: 'shahid_vip', name: 'شاهد ڤی ئای پی (Shahid VIP)', priceIQD: 13500, category: 'فلم و زنجیرە', badge: 'فەرمی' },
+
+  // دەنگ و میوزیک
+  { id: 'apple_music', name: 'ئەپڵ میوزیک (Apple Music)', priceIQD: 7000, category: 'موزیک و دەنگ', badge: 'فەرمی' },
+  { id: 'spotify', name: 'سپۆتیفای پریمێیۆم (Spotify Premium)', priceIQD: 13000, category: 'موزیک و دەنگ', badge: 'فەرمی' },
+  { id: 'youtube_music', name: 'یوتیوب پریمێیۆم و میوزیک (YouTube Premium)', priceIQD: 13000, category: 'موزیک و دەنگ', badge: 'فەرمی' },
+
+  // گەیمینگ
+  { id: 'ps_plus', name: 'پلەی ستەیشن پڵەس (PlayStation Plus)', priceIQD: 22000, category: 'گەیمینگ', badge: 'فەرمی' },
+
   // ئۆفەرێن تایبەت (Bundles)
   { id: 'bundle_ai', name: 'پاکێجا AI VIP (ChatGPT + Claude)', priceIQD: 63000, category: 'ئۆفەرێ تایبەت', badge: 'داشکاندن 🔥', isBundle: true },
   { id: 'bundle_creator', name: 'پاکێجا دروستکەران (Canva + ElevenLabs)', priceIQD: 31500, category: 'ئۆفەرێ تایبەت', badge: 'داشکاندن 🔥', isBundle: true }
-  
 ];
 
 // زانیاریێن ئەکاونتێن پارەدانێ

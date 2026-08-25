@@ -51,7 +51,7 @@ const PAYMENT_ACCOUNTS = {
   FIB: { title: 'First Iraqi Bank (FIB)', number: '07504060378', note: 'یان دناڤ ئەپا FIB بنڤیسە: IPBITS' },
   FastPay: { title: 'FastPay Wallet', number: '07504060378', note: 'ژمارا وەسڵێ پشتی پارەدانێ بنڤیسە' },
   ZainCash: { title: 'Zain Cash', number: '07800000000', note: 'ژمارا وەسڵێ د فۆرمێ دا بنڤیسە' },
-  PayPal: { title: 'PayPal', number: 'peshwarfarhad@gmail.com', note: 'پارەی ب شێوەیێ Friends & Family بنێرە و ناڤێ خۆ بنڤیسە' },
+  PayPal: { title: 'PayPal', number: 'peshwarf@icloud.com', note: 'پارەی ب شێوەیێ Friends & Family بنێرە و ناڤێ خۆ بنڤیسە' },
   USDT: { title: 'USDT (TRC20)', number: 'TUeqkjzFdD7b1EtnAJL9tbzB1uN8wDbU6T', note: 'تەنێ ل سەر تۆڕا Tron (TRC20) فرێکە و TxID بنڤیسە' }
 };
 

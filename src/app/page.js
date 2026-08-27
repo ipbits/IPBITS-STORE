@@ -28,7 +28,6 @@ const PRODUCTS = [
   },
 
   // بەرهەمێن دی یێن تە...
-  { id: 'chatgpt', name: 'ChatGPT Plus', priceIQD: 35000, category: 'هاریکارێ AI', badge: 'فەرمی' },
   // ...
   // ژیرییا دەستکرد (AI)
   { id: 'chatgpt', name: 'ChatGPT Plus', priceIQD: 35000, category: 'هاریکارێ AI', badge: 'فەرمی' },

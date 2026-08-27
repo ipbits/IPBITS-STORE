@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
-// لینکێ وێب ئەپا تە یا Google Apps Script ل ڤێرە دانێ
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
+// لینکێ تە یێ دروست یێ Google Apps Script
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz6cPrMaQLa-3W5opaOCN8Scq5DS-OBUIM1wIzjS7oVS9JYk9EdGvYvLY-EWgCjb7j3/exec';
 
 export async function POST(request) {
   try {
@@ -18,50 +18,65 @@ export async function POST(request) {
       image 
     } = body;
 
-    // پشکنینا ناڤ و تەلەفۆنێ
-    if (!name || name.trim().length < 2) {
-      return NextResponse.json({ error: 'تکایە ناڤەکێ دروست بنڤیسە.' }, { status: 400 });
-    }
-
-    const cleanPhone = phone ? phone.replace(/\s+/g, '') : '';
-    if (!cleanPhone || cleanPhone.length < 8) {
-      return NextResponse.json({ error: 'تکایە ژمارەکا تەلەفۆنێ یا دروست بنڤیسە.' }, { status: 400 });
-    }
-
     const finalIQD = Number(totalIQD || totalPrice || 0);
+    const cleanPhone = phone ? String(phone).replace(/\s+/g, '') : '';
+    const itemsFormatted = Array.isArray(items) 
+      ? items.map(i => `${i.name || i.title || 'بەرهەم'} (x${i.quantity || 1})`).join(', ') 
+      : String(items || '');
 
-    // ١. فرێکرنا داتایێ ب تەمامی بۆ Google Apps Script
-    if (GOOGLE_SCRIPT_URL && !GOOGLE_SCRIPT_URL.includes('YOUR_SCRIPT_ID')) {
-      const payload = {
-        name: name.trim(),
-        phone: cleanPhone,
-        items: items,
-        totalIQD: finalIQD,
-        totalUSD: totalUSD || '',
-        paymentMethod: paymentMethod || 'نەدیار',
-        transactionId: transactionId || 'نینە',
-        image: image || null,
-        timestamp: new Date().toLocaleString("en-US", { timeZone: "Asia/Baghdad" })
-      };
+    // ١. فرێکرنا دەستبەجێ بۆ تێلیگرامێ
+    const botToken = process.env.TELEGRAM_BOT_TOKEN || "8722719386:AAFLmuHmBOrAQmQ8sOC8nGRPwBippcwRfjk";
+    const chatId = process.env.TELEGRAM_CHAT_ID || "5305335340";
+
+    if (botToken && chatId) {
+      const tgText = `🛍️ *داخوازیەکا نوی گەهشتە IPBITS STORE!*\n\n` +
+        `👤 *ناڤ:* ${name || 'نەدیار'}\n` +
+        `📱 *واتساپ:* ${cleanPhone || 'نینە'}\n` +
+        `📦 *پشکداری:* ${itemsFormatted}\n` +
+        `💰 *کۆم:* ${finalIQD.toLocaleString()} IQD\n` +
+        `💳 *ڕێکا پارەدانێ:* ${paymentMethod || 'نەدیار'}\n` +
+        `🧾 *کۆدێ وەسڵێ:* ${transactionId || 'نینە'}`;
 
       try {
-        await fetch(GOOGLE_SCRIPT_URL, {
+        await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: tgText,
+            parse_mode: 'Markdown'
+          })
         });
-      } catch (scriptErr) {
-        console.error('Apps Script Fetch Error:', scriptErr);
+      } catch (tgErr) {
+        console.error('Telegram Error:', tgErr);
       }
     }
 
-    return NextResponse.json({ 
-      success: true, 
-      message: 'داخوازی ب سەرکەفتیانە هاتە تۆمارکرن.' 
-    }, { status: 200 });
+    // ٢. فرێکرن بۆ Google Apps Script (شیت و درایڤ)
+    try {
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          name: name || '',
+          phone: cleanPhone || '',
+          items: itemsFormatted,
+          totalIQD: finalIQD,
+          totalUSD: totalUSD || '',
+          paymentMethod: paymentMethod || 'نەدیار',
+          transactionId: transactionId || 'نینە',
+          image: image || null
+        }),
+        redirect: 'follow'
+      });
+    } catch (sheetErr) {
+      console.error('Google Sheet Error:', sheetErr);
+    }
+
+    return NextResponse.json({ success: true, message: 'داخوازی ب سەرکەفتیانە گەهشت' }, { status: 200 });
 
   } catch (error) {
     console.error('Order Route Error:', error);
-    return NextResponse.json({ error: 'خەلەتیەک د سێرڤەری دا ڕوویدا.' }, { status: 500 });
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

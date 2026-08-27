@@ -15,9 +15,9 @@ export async function POST(req) {
         "X-Title": "IPBITS AI Hub",
       },
       body: JSON.stringify({
-        model: model || "google/gemini-2.0-flash-exp:free",
-        messages: messages,
-      }),
+  model: model || "meta-llama/llama-3.3-70b-instruct:free",
+  messages: messages,
+}),
     });
 
     const data = await response.json();

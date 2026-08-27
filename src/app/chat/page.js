@@ -3,7 +3,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, Sparkles } from 'lucide-react';
 
 const MODELS = [
-  { id: 'google/gemini-2.0-flash-exp:free', name: 'Gemini 2.0 Flash (بێ بەرامبەر)' },
   { id: 'meta-llama/llama-3.3-70b-instruct:free', name: 'Llama 3.3 70B (بێ بەرامبەر)' },
   { id: 'deepseek/deepseek-r1:free', name: 'DeepSeek R1 (بێ بەرامبەر)' },
   { id: 'qwen/qwen-2.5-coder-32b-instruct:free', name: 'Qwen 2.5 Coder (بێ بەرامبەر)' }

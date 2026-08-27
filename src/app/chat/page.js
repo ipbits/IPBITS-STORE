@@ -3,11 +3,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, Sparkles } from 'lucide-react';
 
 const MODELS = [
-  { id: 'google/gemini-2.0-flash-thinking-exp:free', name: 'Gemini 2.0 Flash (بێ بەرامبەر)' },
-  { id: 'deepseek/deepseek-r1:free', name: 'DeepSeek R1 (بێ بەرامبەر)' },
+  { id: 'google/gemini-2.0-flash-001', name: 'Gemini 2.0 Flash (بێ بەرامبەر)' },
+  { id: 'deepseek/deepseek-chat', name: 'DeepSeek V3' },
   { id: 'meta-llama/llama-3.3-70b-instruct:free', name: 'Llama 3.3 70B (بێ بەرامبەر)' },
-  { id: 'qwen/qwen-2.5-coder-32b-instruct:free', name: 'Qwen 2.5 Coder (بێ بەرامبەر)' },
-  { id: 'openai/gpt-4o-mini', name: 'ChatGPT 4o Mini' }
+  { id: 'qwen/qwen-2.5-coder-32b-instruct:free', name: 'Qwen 2.5 Coder (بێ بەرامبەر)' }
 ];
 
 export default function ChatPage() {
@@ -34,7 +33,6 @@ export default function ChatPage() {
     setLoading(true);
 
     try {
-      // ئامادەکرنا مێژوویا چاتێ بۆ مۆدێلی
       const apiMessages = newMessages.map(m => ({
         role: m.role,
         content: m.content
@@ -65,8 +63,6 @@ export default function ChatPage() {
 
   return (
     <div className="min-h-screen bg-[#070913] text-white flex flex-col justify-between" dir="rtl">
-      
-      {/* سەرێ لاپەری (Header) */}
       <header className="border-b border-slate-800/80 bg-slate-950/50 backdrop-blur-md px-6 py-4 flex items-center justify-between sticky top-0 z-10">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 bg-purple-600/20 border border-purple-500/30 rounded-xl flex items-center justify-center shadow-lg shadow-purple-900/20">
@@ -77,7 +73,6 @@ export default function ChatPage() {
           </span>
         </div>
 
-        {/* هەلبژارتنا مۆدێلی */}
         <div>
           <select
             value={model}
@@ -93,7 +88,6 @@ export default function ChatPage() {
         </div>
       </header>
 
-      {/* ناڤەڕۆکا چاتێ (Messages List) */}
       <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 max-w-4xl w-full mx-auto">
         {messages.map((m, idx) => (
           <div
@@ -130,7 +124,6 @@ export default function ChatPage() {
         <div ref={chatEndRef} />
       </div>
 
-      {/* بەشێ نڤیسینا پرسیارێ (Input Area) */}
       <div className="p-4 border-t border-slate-800/80 bg-slate-950/60 backdrop-blur-md">
         <form onSubmit={handleSend} className="max-w-4xl mx-auto flex items-center gap-2">
           <input
@@ -149,7 +142,6 @@ export default function ChatPage() {
           </button>
         </form>
       </div>
-
     </div>
   );
 }

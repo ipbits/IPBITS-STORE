@@ -1,118 +1,67 @@
 import { NextResponse } from 'next/server';
 
-function sanitizeInput(text) {
-  if (typeof text !== 'string') return '';
-  return text.replace(/[<>]/g, '').trim();
-}
+// لینکێ وێب ئەپا تە یا Google Apps Script ل ڤێرە دانێ
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
 
 export async function POST(request) {
   try {
     const body = await request.json();
-    let { 
+    const { 
       name, 
       phone, 
-      address, 
       items, 
-      totalPrice, 
       totalIQD, 
+      totalPrice, 
+      totalUSD, 
       paymentMethod, 
       transactionId, 
       image 
     } = body;
 
-    name = sanitizeInput(name);
-    phone = sanitizeInput(phone);
-    address = sanitizeInput(address);
-    paymentMethod = sanitizeInput(paymentMethod);
-    transactionId = sanitizeInput(transactionId);
-
-    // پشکنینا ناڤی
-    if (!name || name.length < 2 || name.length > 50) {
+    // پشکنینا ناڤ و تەلەفۆنێ
+    if (!name || name.trim().length < 2) {
       return NextResponse.json({ error: 'تکایە ناڤەکێ دروست بنڤیسە.' }, { status: 400 });
     }
 
-    // پشکنینا تەلەفۆنێ
     const cleanPhone = phone ? phone.replace(/\s+/g, '') : '';
-    const phoneRegex = /^[0-9+]{8,16}$/;
-    if (!cleanPhone || !phoneRegex.test(cleanPhone)) {
+    if (!cleanPhone || cleanPhone.length < 8) {
       return NextResponse.json({ error: 'تکایە ژمارەکا تەلەفۆنێ یا دروست بنڤیسە.' }, { status: 400 });
     }
 
-    // پشکنینا سەبەتێ
-    if (!items || (Array.isArray(items) && items.length === 0)) {
-      return NextResponse.json({ error: 'سەبەتە یا بەتاڵە!' }, { status: 400 });
-    }
+    const finalIQD = Number(totalIQD || totalPrice || 0);
 
-    const finalPrice = totalIQD || totalPrice || 0;
-    const itemsFormatted = Array.isArray(items) ? JSON.stringify(items) : String(items);
-
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-    if (!supabaseUrl || !supabaseKey) {
-      console.error('Supabase credentials missing');
-      return NextResponse.json({ error: 'کلیلێن داتابەیسێ نەهاتینە دیتن.' }, { status: 500 });
-    }
-
-    // تۆمارکرن د Supabase ب ڕێکا REST API
-    const dbRes = await fetch(`${supabaseUrl}/rest/v1/orders`, {
-      method: 'POST',
-      headers: {
-        'apikey': supabaseKey,
-        'Authorization': `Bearer ${supabaseKey}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
-      },
-      body: JSON.stringify([{
-        customer_name: name,
+    // ١. فرێکرنا داتایێ ب تەمامی بۆ Google Apps Script
+    if (GOOGLE_SCRIPT_URL && !GOOGLE_SCRIPT_URL.includes('YOUR_SCRIPT_ID')) {
+      const payload = {
+        name: name.trim(),
         phone: cleanPhone,
-        payment_method: paymentMethod || 'نەدیار',
-        transaction_id: transactionId || 'نینە',
-        items: itemsFormatted,
-        total_price: Number(finalPrice) || 0,
-        image_url: image ? (image.base64 || image) : null,
-        created_at: new Date().toISOString()
-      }])
-    });
-
-    if (!dbRes.ok) {
-      const errText = await dbRes.text();
-      console.error('Supabase Error:', errText);
-      return NextResponse.json({ error: 'خەلەتیەک د تۆمارکرنا داخوازیێ دا ڕوویدا د داتابەیسێ دا.' }, { status: 500 });
-    }
-
-    // هنارتنا ئاگاداریێ بۆ تێلێگرامێ
-    const botToken = process.env.TELEGRAM_BOT_TOKEN;
-    const chatId = process.env.TELEGRAM_CHAT_ID;
-
-    if (botToken && chatId) {
-      const message = `🛍️ *داخوازیەکا نوی گەهشت!*\n\n` +
-        `👤 *ناڤ:* ${name}\n` +
-        `📞 *تەلەفۆن:* ${cleanPhone}\n` +
-        `💳 *ڕێکا پارەدانێ:* ${paymentMethod || 'نەدیار'}\n` +
-        `🔢 *کۆدێ وەصڵێ:* ${transactionId || 'نینە'}\n` +
-        `💰 *کۆمێ پارەی:* ${finalPrice.toLocaleString ? finalPrice.toLocaleString() : finalPrice} IQD\n` +
-        `📦 *بەرهەم:* ${Array.isArray(items) ? items.length : 1} دانە`;
+        items: items,
+        totalIQD: finalIQD,
+        totalUSD: totalUSD || '',
+        paymentMethod: paymentMethod || 'نەدیار',
+        transactionId: transactionId || 'نینە',
+        image: image || null,
+        timestamp: new Date().toLocaleString("en-US", { timeZone: "Asia/Baghdad" })
+      };
 
       try {
-        await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        await fetch(GOOGLE_SCRIPT_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            chat_id: chatId,
-            text: message,
-            parse_mode: 'Markdown'
-          })
+          body: JSON.stringify(payload)
         });
-      } catch (tgError) {
-        console.error('Telegram notification error:', tgError);
+      } catch (scriptErr) {
+        console.error('Apps Script Fetch Error:', scriptErr);
       }
     }
 
-    return NextResponse.json({ success: true, message: 'داخوازی ب سەرکەفتیانە هاتە تۆمارکرن.' }, { status: 200 });
+    return NextResponse.json({ 
+      success: true, 
+      message: 'داخوازی ب سەرکەفتیانە هاتە تۆمارکرن.' 
+    }, { status: 200 });
 
   } catch (error) {
-    console.error('API Error:', error);
+    console.error('Order Route Error:', error);
     return NextResponse.json({ error: 'خەلەتیەک د سێرڤەری دا ڕوویدا.' }, { status: 500 });
   }
 }

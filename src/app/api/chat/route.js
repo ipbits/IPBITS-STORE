@@ -4,6 +4,45 @@ export async function POST(req) {
   try {
     const { messages, model } = await req.json();
 
+    // وەرگرتنا دووماهیک پەیاما بەکارهێنەری
+    const lastMessage = messages[messages.length - 1]?.content;
+    let promptText = '';
+
+    if (typeof lastMessage === 'string') {
+      promptText = lastMessage;
+    } else if (Array.isArray(lastMessage)) {
+      const textPart = lastMessage.find(p => p.type === 'text');
+      promptText = textPart?.text || '';
+    }
+
+    const lowerText = promptText.toLowerCase();
+
+    // پشکنین: ئەرێ داخوازی بۆ دروستکرنا وێنەی یە یان مۆدێلێ Flux/Recraft یە؟
+    const isImageModel = model?.includes('flux') || model?.includes('recraft');
+    const hasImageKeyword = 
+      lowerText.includes('وێنە') || 
+      lowerText.includes('چێکە') || 
+      lowerText.includes('صورة') || 
+      lowerText.includes('رسم') || 
+      lowerText.includes('image') || 
+      lowerText.includes('photo') || 
+      lowerText.includes('draw') || 
+      lowerText.includes('generate');
+
+    // ئەگەر داخوازییا وێنەی بیت، ئێکسەر وێنەی ب مۆدێلێ Flux چێکە
+    if (isImageModel || (hasImageKeyword && !lowerText.includes('شیکار'))) {
+      const cleanPrompt = encodeURIComponent(
+        promptText.replace(/وێنە|چێکە|photo|image|draw|generate|picture|بۆ من|صورة|رسم/gi, '').trim() || 'beautiful high quality aesthetic wallpaper'
+      );
+      
+      const generatedImageUrl = `https://image.pollinations.ai/prompt/${cleanPrompt}?width=1024&height=1024&nologo=true&model=flux`;
+
+      return NextResponse.json({ 
+        reply: `![AI Image](${generatedImageUrl})` 
+      });
+    }
+
+    // بۆ چات و شیکاریا ئاسایی، پەیوەندیێ ب OpenRouter بکە
     const apiKey = process.env.OPENROUTER_API_KEY;
 
     if (!apiKey) {

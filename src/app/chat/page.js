@@ -1,27 +1,35 @@
 'use client';
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, Sparkles, Loader2 } from 'lucide-react';
+import { Send, Bot, User, Sparkles, Loader2, Image as ImageIcon, X } from 'lucide-react';
 
 // مۆدێلێن بنەڕەتی هەتا لیستا مەزن بار دبیت
 const DEFAULT_MODELS = [
+  // مۆدێلێن دروستکرنا وێنەیان
+  { id: 'black-forest-labs/flux-schnell', name: 'Flux Schnell (دروستکرنا وێنەی 🎨)' },
+  { id: 'recraft-ai/recraft-20b', name: 'Recraft AI (دیزاین و وێنە 🎨)' },
+
+  // مۆدێلێن چات و شیکاریا وێنەیان
+  { id: 'google/gemini-2.0-flash-exp:free', name: 'Gemini 2.0 Flash (🎁 وێنە + بەلاش)' },
   { id: 'deepseek/deepseek-r1:free', name: 'DeepSeek R1 (🎁 بەلاش)' },
   { id: 'deepseek/deepseek-chat:free', name: 'DeepSeek V3 (🎁 بەلاش)' },
-  { id: 'google/gemini-2.0-flash-exp:free', name: 'Gemini 2.0 Flash (🎁 بەلاش)' },
   { id: 'meta-llama/llama-3.3-70b-instruct:free', name: 'Llama 3.3 70B (🎁 بەلاش)' },
-  { id: 'openai/gpt-4o-mini', name: 'ChatGPT 4o Mini ⚡' },
-  { id: 'anthropic/claude-3-5-haiku', name: 'Claude 3.5 Haiku ⚡' }
+  { id: 'openai/gpt-4o-mini', name: 'ChatGPT 4o Mini (وێنە ⚡)' },
+  { id: 'anthropic/claude-3-5-haiku', name: 'Claude 3.5 Haiku (وێنە ⚡)' }
 ];
 
 export default function ChatPage() {
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: 'سڵاڤ! ئەڤە پلاتفۆڕما IPBITS AI Hubە. هەر پرسیارەکا تە هەبیت بنڤیسە.' }
+    { role: 'assistant', content: 'سڵاڤ! ئەڤە پلاتفۆڕما IPBITS AI Hubە. هەر پرسیارەکا تە هەبیت بنڤیسە یان وێنەیان بار بکە.' }
   ]);
   const [input, setInput] = useState('');
   const [model, setModel] = useState(DEFAULT_MODELS[0].id);
   const [modelsList, setModelsList] = useState(DEFAULT_MODELS);
   const [loadingModels, setLoadingModels] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  
   const chatEndRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   // ئینانا هەمی مۆدێلێن OpenRouter ب ئۆتۆماتیکی (پتر ژ ١٠٠ مۆدێلان)
   useEffect(() => {
@@ -52,21 +60,59 @@ export default function ChatPage() {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // وەرگرتن و گوهۆڕینا وێنەی بۆ Base64
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSelectedImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const clearImage = () => {
+    setSelectedImage(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
   const handleSend = async (e) => {
     e?.preventDefault();
-    if (!input.trim() || loading) return;
+    if ((!input.trim() && !selectedImage) || loading) return;
 
     const userText = input.trim();
-    const newMessages = [...messages, { role: 'user', content: userText }];
+    const currentImage = selectedImage;
+
+    const userMsg = { 
+      role: 'user', 
+      content: userText,
+      image: currentImage 
+    };
+
+    const newMessages = [...messages, userMsg];
     setMessages(newMessages);
     setInput('');
+    clearImage();
     setLoading(true);
 
     try {
-      const apiMessages = newMessages.map(m => ({
-        role: m.role,
-        content: m.content
-      }));
+      // ئامادەکرنا فۆرماتا پەیامان بۆ مۆدێلێن دەق و وێنەیان (Multi-modal)
+      const apiMessages = newMessages.map(m => {
+        if (m.image) {
+          return {
+            role: m.role,
+            content: [
+              { type: 'text', text: m.content || 'ڤی وێنەی شیکار بکە:' },
+              { type: 'image_url', image_url: { url: m.image } }
+            ]
+          };
+        }
+        return {
+          role: m.role,
+          content: m.content
+        };
+      });
 
       const res = await fetch('/api/chat', {
         method: 'POST',
@@ -94,7 +140,8 @@ export default function ChatPage() {
 
   return (
     <div className="min-h-screen bg-[#070913] text-white flex flex-col justify-between font-sans" dir="rtl">
-      {/* سەرێ لاپەڕی و هەلبژارتنا زێدەتر ژ ١٠٠ مۆدێلان */}
+      
+      {/* سەرێ لاپەڕی */}
       <header className="border-b border-slate-800/80 bg-slate-950/50 backdrop-blur-md px-6 py-4 flex items-center justify-between sticky top-0 z-10 gap-3">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 bg-purple-600/20 border border-purple-500/30 rounded-xl flex items-center justify-center shadow-lg shadow-purple-900/20">
@@ -145,7 +192,28 @@ export default function ChatPage() {
                   : 'bg-slate-900/90 border border-slate-800 text-slate-200 rounded-bl-none shadow-md'
               }`}
             >
-              {m.content}
+              {/* پیشاندانا وێنەیێ هاتیە بارکرن ژ لایێ بەکارهێنەری */}
+              {m.image && (
+                <img 
+                  src={m.image} 
+                  alt="Uploaded Asset" 
+                  className="max-w-xs max-h-60 rounded-xl mb-2.5 border border-purple-400/30 object-cover" 
+                />
+              )}
+
+              {/* پیشاندانا وێنەیێ زیرەکیا دەستکرد دروستکری */}
+              {typeof m.content === 'string' && (m.content.includes('![AI Image]') || m.content.includes('image.pollinations.ai') || m.content.startsWith('http://') || m.content.startsWith('https://')) && (m.content.includes('.jpg') || m.content.includes('.png') || m.content.includes('pollinations.ai')) ? (
+                <div className="space-y-2">
+                  <img 
+                    src={m.content.replace('![AI Image](', '').replace(')', '').trim()} 
+                    alt="AI Generated" 
+                    className="rounded-2xl max-w-sm w-full border border-purple-500 shadow-xl object-cover" 
+                  />
+                  <span className="text-[10px] text-purple-300 block">✨ وێنە ب سەرکەفتی هاتە دروستکرن</span>
+                </div>
+              ) : (
+                m.content
+              )}
             </div>
           </div>
         ))}
@@ -164,25 +232,64 @@ export default function ChatPage() {
         <div ref={chatEndRef} />
       </div>
 
-      {/* جهێ نڤیسینا نامێ */}
+      {/* جهێ نڤیسینێ و بارکرنا وێنەی */}
       <div className="p-4 border-t border-slate-800/80 bg-slate-950/60 backdrop-blur-md">
+        
+        {/* نیشاندانا وێنەیێ هەلبژارتی بەرامبەر شاشێ بەری فرێکرنێ */}
+        {selectedImage && (
+          <div className="max-w-4xl mx-auto mb-2 relative inline-block">
+            <img 
+              src={selectedImage} 
+              alt="Preview" 
+              className="h-16 w-16 object-cover rounded-xl border-2 border-purple-500 shadow-md" 
+            />
+            <button
+              type="button"
+              onClick={clearImage}
+              className="absolute -top-2 -right-2 bg-rose-600 text-white rounded-full p-0.5 hover:bg-rose-500 transition-colors"
+            >
+              <X size={14} />
+            </button>
+          </div>
+        )}
+
         <form onSubmit={handleSend} className="max-w-4xl mx-auto flex items-center gap-2">
+          
+          {/* دوگمەیا بارکرنا وێنەی */}
+          <input
+            type="file"
+            accept="image/*"
+            ref={fileInputRef}
+            onChange={handleImageChange}
+            className="hidden"
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="bg-slate-900 hover:bg-slate-800 text-purple-400 border border-slate-800 p-3.5 rounded-2xl transition-all cursor-pointer hover:border-purple-500/50"
+            title="بارکرنا وێنەی"
+          >
+            <ImageIcon size={18} />
+          </button>
+
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="پرسیارا خۆ ل ڤێرە بنڤیسە..."
+            placeholder="پرسیارا خۆ بنڤیسە یان داخوازییا وێنەی بکە..."
             className="flex-1 bg-slate-900 border border-slate-800 rounded-2xl px-5 py-3.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 transition-colors"
           />
+          
           <button
             type="submit"
-            disabled={!input.trim() || loading}
+            disabled={(!input.trim() && !selectedImage) || loading}
             className="bg-purple-600 hover:bg-purple-500 disabled:opacity-40 text-white p-3.5 rounded-2xl transition-all cursor-pointer shadow-lg shadow-purple-600/30"
           >
             <Send size={18} className="transform rotate-180" />
           </button>
         </form>
       </div>
+
     </div>
   );
 }

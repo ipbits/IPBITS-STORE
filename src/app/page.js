@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   ShoppingBag, CheckCircle2, Trash2, Sparkles, Send, 
-  ShieldCheck, MessageCircle, Copy, Check, Flame, UploadCloud, X, RefreshCw, Lock, Zap, Clock
+  ShieldCheck, MessageCircle, Copy, Check, Flame, UploadCloud, X, RefreshCw, Lock, Zap, Clock, Instagram, Heart
 } from 'lucide-react';
 
 const IPBitsLogo = () => (
@@ -39,13 +39,12 @@ const LOCKED_PRODUCTS = [
 ];
 
 const PAYMENT_ACCOUNTS = {
-  FIB: { title: 'First Iraqi Bank (FIB)', number: '07504060378', note: 'ژمارا وەسڵێ پشتی پارەدانێ بنڤیسە' },
+  FIB: { title: 'First Iraqi Bank (FIB)', number: '07504060378', note: 'یان دناڤ ئەپا FIB بنڤیسە: IPBITS' },
   FastPay: { title: 'FastPay Wallet', number: '07504060378', note: 'ژمارا وەسڵێ پشتی پارەدانێ بنڤیسە' },
   ZainCash: { title: 'Zain Cash', number: '07504060378', note: 'ژمارا وەسڵێ د فۆرمێ دا بنڤیسە' },
   PayPal: { title: 'PayPal', number: 'https://www.paypal.com/ncp/payment/VDDES8YRYJG46', note: 'پارەی ب شێوەیێ Friends & Family بنێرە و ناڤێ خۆ بنڤیسە' },
   USDT: { title: 'USDT (TRC20)', number: 'TUeqkjzFdD7b1EtnAJL9tbzB1uN8wDbU6T', note: 'تەنێ ل سەر تۆڕا Tron (TRC20) فرێکە و TxID بنڤیسە' }
 };
-
 export default function StorePage() {
   const [selectedTier, setSelectedTier] = useState(AI_TIERS[2]);
   const [cart, setCart] = useState([]);
@@ -191,7 +190,7 @@ export default function StorePage() {
   const isCurrentTierInCart = cart.some(i => i.id === `ai_bundle_${selectedTier.id}`);
 
   return (
-    <div className="min-h-screen bg-[#070913] text-slate-100 font-sans selection:bg-purple-600 selection:text-white pb-20" dir="rtl">
+    <div className="min-h-screen bg-[#070913] text-slate-100 font-sans selection:bg-purple-600 selection:text-white flex flex-col justify-between" dir="rtl">
       
       {/* سەرێ لاپەری */}
       <nav className="border-b border-slate-800/60 bg-[#0c1022]/80 backdrop-blur-xl sticky top-0 z-50">
@@ -217,9 +216,9 @@ export default function StorePage() {
         </div>
       </nav>
 
-      <main className="max-w-6xl mx-auto px-6 mt-12">
+      {/* ناڤەرۆکا سەرەکی */}
+      <main className="max-w-6xl mx-auto px-6 mt-12 mb-20 flex-1">
         
-        {/* سەردێڕ و ناساندن */}
         <div ref={productsSectionRef} className="text-center max-w-3xl mx-auto mb-12">
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-950/80 via-fuchsia-950/80 to-indigo-950/80 text-purple-300 px-5 py-2 rounded-full text-xs font-black mb-5 border border-purple-500/40 shadow-xl shadow-purple-900/30 animate-pulse">
             <Sparkles className="text-amber-400" size={15} />
@@ -240,7 +239,6 @@ export default function StorePage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
           
-          {/* بەشێ ئۆفەرا سەرەکی و بەرهەمان */}
           <div className="lg:col-span-2 space-y-6">
             
             <div className="p-6 sm:p-8 rounded-3xl border border-purple-500/60 bg-gradient-to-br from-purple-950/60 via-slate-900/95 to-indigo-950/60 shadow-2xl shadow-purple-950/40 ring-1 ring-purple-500/40 relative overflow-hidden">
@@ -263,7 +261,6 @@ export default function StorePage() {
                 دەستڤەئینانا هەمی مۆدێلێن پێشکەفتی (DeepSeek R1/V3, Claude 3.5, ChatGPT 4o Mini, Gemini 2.0, Flux 🎨) بێی پێدڤیبوون ب چەندین پشکدارییان.
               </p>
 
-              {/* هەلبژارتنا دەمێ پاکێجێ */}
               <div className="mb-6">
                 <label className="block text-xs font-bold text-purple-300 mb-3">
                   مەودایێ دەمی هەلبژێرە:
@@ -300,7 +297,6 @@ export default function StorePage() {
                 </div>
               </div>
 
-              {/* بهایێ گشتیێ پاکێجا هەلبژارتی */}
               <div className="flex items-baseline justify-between p-4 bg-slate-950/70 rounded-2xl border border-purple-500/20 mb-6">
                 <div>
                   <span className="text-xs text-slate-400 block">بهایێ پاکێجا هەلبژارتی ({selectedTier.duration}):</span>
@@ -318,7 +314,6 @@ export default function StorePage() {
                 </span>
               </div>
 
-              {/* دوگما زێدەکرن بۆ سەبەتێ */}
               <button
                 type="button"
                 onClick={addAIToCart}
@@ -338,7 +333,6 @@ export default function StorePage() {
               </button>
             </div>
 
-            {/* بەرهەمێن دی یێن قوفڵکری */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {LOCKED_PRODUCTS.map((product) => (
                 <div 
@@ -368,7 +362,7 @@ export default function StorePage() {
 
           </div>
 
-          {/* سەبەتە و فۆرمێ داخوازیێ */}
+          {/* سەبەتە و فۆرم */}
           <div ref={cartSectionRef} className="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 shadow-2xl backdrop-blur-md sticky top-28 scroll-mt-28">
             <div className="flex items-center justify-between border-b border-slate-800/80 pb-4 mb-5">
               <h3 className="font-extrabold text-lg flex items-center gap-2 text-white">
@@ -545,6 +539,35 @@ export default function StorePage() {
 
         </div>
       </main>
+
+      {/* فۆتەر */}
+      <footer className="border-t border-slate-800/80 bg-[#0c1022]/90 backdrop-blur-md py-8 px-6 mt-16">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+          
+          <div className="flex items-center gap-2">
+            <span>گەشەپێدای ب</span>
+            <Heart size={14} className="text-rose-500 fill-rose-500 animate-pulse" />
+            <span>ژ لایێ</span>
+            <span className="font-black text-purple-300">Peshwar Farhad</span>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <a 
+              href="https://instagram.com/ipbits" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 bg-slate-900/80 hover:bg-purple-950/60 border border-purple-500/30 hover:border-purple-500/60 text-purple-300 px-3.5 py-1.5 rounded-xl font-bold transition-all shadow-sm hover:scale-105"
+            >
+              <Instagram size={14} className="text-fuchsia-400" />
+              <span>@ipbits</span>
+            </a>
+            <span className="text-slate-600">|</span>
+            <span>© {new Date().getFullYear()} IPBITS STORE. هەمی ماف پاراستینە.</span>
+          </div>
+
+        </div>
+      </footer>
+
     </div>
   );
 }

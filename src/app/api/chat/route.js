@@ -8,7 +8,7 @@ export async function POST(req) {
 
     if (!apiKey) {
       return NextResponse.json(
-        { error: "کلیلا API د Vercel یان .env.local دا نەهاتییە دیتن." },
+        { error: "کلیلا API یا ئامادە نینە د سێرڤەری دا" },
         { status: 500 }
       );
     }

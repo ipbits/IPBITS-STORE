@@ -542,9 +542,8 @@ export default function StorePage() {
       <footer className="w-full border-t border-slate-800/80 bg-[#0c1022]/90 backdrop-blur-md py-8 px-6 mt-12">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
           
-          <div>
-            <span>گەشەپێدایە ژ لایێ </span>
-            <span className="font-black text-purple-300">Peshwar Farhad</span>
+          <div className="flex items-center gap-2">
+            <span>© IPBITS STORE. هەمی ماف پاراستینە.</span>
           </div>
 
           <div className="flex items-center gap-4">
@@ -559,13 +558,10 @@ export default function StorePage() {
               </svg>
               <span>@ipbits</span>
             </a>
-            <span className="text-slate-600">|</span>
-            <span>© IPBITS STORE. هەمی ماف پاراستینە.</span>
           </div>
 
         </div>
       </footer>
-
     </div>
   );
 }

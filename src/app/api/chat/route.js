@@ -1,10 +1,38 @@
 import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
+
+// گرێدان ب داتابەیسا Supabase
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export async function POST(req) {
   try {
-    const { messages, model } = await req.json();
+    const { messages, model, userEmail } = await req.json();
 
-    // وەرگرتنا دووماهیک پەیاما بەکارهێنەری
+    // ١. ئینانا خۆکار یا کلیلا وی کڕیاری ژ تابلۆیێ profiles
+    let activeApiKey = process.env.OPENROUTER_API_KEY;
+
+    if (userEmail) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('api_key')
+        .eq('email', userEmail)
+        .single();
+
+      if (profile?.api_key) {
+        activeApiKey = profile.api_key;
+      }
+    }
+
+    if (!activeApiKey) {
+      return NextResponse.json(
+        { error: "چو کلیلا چالاک بۆ ڤی بەکارهێنەری نەهاتە دیتن." },
+        { status: 400 }
+      );
+    }
+
+    // ٢. پشکنینا دروستکرنا وێنەیان
     const lastMessage = messages[messages.length - 1]?.content;
     let promptText = '';
 
@@ -16,46 +44,28 @@ export async function POST(req) {
     }
 
     const lowerText = promptText.toLowerCase();
-
-    // پشکنین: ئەرێ داخوازی بۆ دروستکرنا وێنەی یە یان مۆدێلێ Flux/Recraft یە؟
     const isImageModel = model?.includes('flux') || model?.includes('recraft');
     const hasImageKeyword = 
       lowerText.includes('وێنە') || 
       lowerText.includes('چێکە') || 
       lowerText.includes('صورة') || 
-      lowerText.includes('رسم') || 
       lowerText.includes('image') || 
-      lowerText.includes('photo') || 
-      lowerText.includes('draw') || 
-      lowerText.includes('generate');
+      lowerText.includes('photo');
 
-    // ئەگەر داخوازییا وێنەی بیت، ئێکسەر وێنەی ب مۆدێلێ Flux چێکە
     if (isImageModel || (hasImageKeyword && !lowerText.includes('شیکار'))) {
       const cleanPrompt = encodeURIComponent(
-        promptText.replace(/وێنە|چێکە|photo|image|draw|generate|picture|بۆ من|صورة|رسم/gi, '').trim() || 'beautiful high quality aesthetic wallpaper'
+        promptText.replace(/وێنە|چێکە|photo|image|draw|generate|picture|بۆ من|صورة/gi, '').trim() || 'beautiful scenery'
       );
-      
       const generatedImageUrl = `https://image.pollinations.ai/prompt/${cleanPrompt}?width=1024&height=1024&nologo=true&model=flux`;
 
-      return NextResponse.json({ 
-        reply: `![AI Image](${generatedImageUrl})` 
-      });
+      return NextResponse.json({ reply: `![AI Image](${generatedImageUrl})` });
     }
 
-    // بۆ چات و شیکاریا ئاسایی، پەیوەندیێ ب OpenRouter بکە
-    const apiKey = process.env.OPENROUTER_API_KEY;
-
-    if (!apiKey) {
-      return NextResponse.json(
-        { error: "کلیلا API یا ئامادە نینە د سێرڤەری دا" },
-        { status: 500 }
-      );
-    }
-
+    // ٣. هنارتنا پرسیارێ ب کلیلا تایبەت یا وی کڕیاری بۆ OpenRouter
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${apiKey}`,
+        "Authorization": `Bearer ${activeApiKey}`,
         "Content-Type": "application/json",
         "HTTP-Referer": "https://ipbits.store",
         "X-Title": "IPBITS AI Hub",
@@ -69,16 +79,14 @@ export async function POST(req) {
     const data = await response.json();
 
     if (!response.ok) {
-      console.error("OpenRouter API Error:", data);
-      const errMsg = data.error?.message || "ئاریشەیەک د سێرڤەرێ OpenRouter دا هەیە";
+      const errMsg = data.error?.message || "ئاریشەیەک هەیە د کلیلێ یان باڵانسی دا";
       return NextResponse.json({ error: errMsg }, { status: response.status });
     }
 
-    const reply = data.choices?.[0]?.message?.content || "بەرسڤەک نەهاتە وەرگرتن.";
+    const reply = data.choices?.[0]?.message?.content || "بەرسڤ نەهات.";
     return NextResponse.json({ reply });
 
   } catch (error) {
-    console.error("Chat Catch Error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

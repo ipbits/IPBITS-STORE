@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   ShoppingBag, CheckCircle2, Trash2, Sparkles, Send, 
-  ShieldCheck, MessageCircle, Copy, Check, Flame, UploadCloud, X, RefreshCw, Lock, Zap, Clock, Instagram, Heart
+  ShieldCheck, MessageCircle, Copy, Check, Flame, UploadCloud, X, RefreshCw, Lock, Zap, Clock, Instagram
 } from 'lucide-react';
 
 const IPBitsLogo = () => (
@@ -539,15 +539,12 @@ export default function StorePage() {
 
         </div>
       </main>
-
-      {/* فۆتەر */}
-      <footer className="border-t border-slate-800/80 bg-[#0c1022]/90 backdrop-blur-md py-8 px-6 mt-16">
+{/* فۆتەر */}
+      <footer className="w-full border-t border-slate-800/80 bg-[#0c1022]/90 backdrop-blur-md py-8 px-6 mt-12">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
           
-          <div className="flex items-center gap-2">
-            <span>گەشەپێدای ب</span>
-            <Heart size={14} className="text-rose-500 fill-rose-500 animate-pulse" />
-            <span>ژ لایێ</span>
+          <div>
+            <span>گەشەپێدایە ژ لایێ </span>
             <span className="font-black text-purple-300">Peshwar Farhad</span>
           </div>
 
@@ -556,13 +553,13 @@ export default function StorePage() {
               href="https://instagram.com/ipbits" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 bg-slate-900/80 hover:bg-purple-950/60 border border-purple-500/30 hover:border-purple-500/60 text-purple-300 px-3.5 py-1.5 rounded-xl font-bold transition-all shadow-sm hover:scale-105"
+              className="flex items-center gap-1.5 bg-slate-900/80 hover:bg-purple-950/60 border border-purple-500/30 text-purple-300 px-3.5 py-1.5 rounded-xl font-bold transition-all shadow-sm hover:scale-105"
             >
               <Instagram size={14} className="text-fuchsia-400" />
               <span>@ipbits</span>
             </a>
             <span className="text-slate-600">|</span>
-            <span>© {new Date().getFullYear()} IPBITS STORE. هەمی ماف پاراستینە.</span>
+            <span>© IPBITS STORE. هەمی ماف پاراستینە.</span>
           </div>
 
         </div>

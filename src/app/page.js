@@ -38,7 +38,7 @@ const LOCKED_PRODUCTS = [
 ];
 
 const PAYMENT_ACCOUNTS = {
-  FIB: { title: 'First Iraqi Bank (FIB)', number: '07504060378', note: 'یان دناڤ ئەپا FIB بنڤیسە: IPBITS' },
+  FIB: { title: 'First Iraqi Bank (FIB)', number: '07504060378', note: 'ژمارا وەسڵێ پشتی پارەدانێ بنڤیسە' },
   FastPay: { title: 'FastPay Wallet', number: '07504060378', note: 'ژمارا وەسڵێ پشتی پارەدانێ بنڤیسە' },
   ZainCash: { title: 'Zain Cash', number: '07504060378', note: 'ژمارا وەسڵێ د فۆرمێ دا بنڤیسە' },
   PayPal: { title: 'PayPal', number: 'https://www.paypal.com/ncp/payment/VDDES8YRYJG46', note: 'پارەی ب شێوەیێ Friends & Family بنێرە و ناڤێ خۆ بنڤیسە' },

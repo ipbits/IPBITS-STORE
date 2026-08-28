@@ -3,11 +3,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, Sparkles } from 'lucide-react';
 
 const MODELS = [
-  { id: 'google/gemini-2.0-flash-001', name: 'Gemini 2.0 Flash (زۆر بلەز)' },
-  { id: 'openai/gpt-4o-mini', name: 'ChatGPT 4o Mini (زیرەک و پاراستی)' },
-  { id: 'deepseek/deepseek-chat', name: 'DeepSeek V3 (شیکارکرنا ئالۆز)' },
-  { id: 'anthropic/claude-3.5-sonnet', name: 'Claude 3.5 Sonnet (پڕۆفێشناڵ)' },
-  { id: 'meta-llama/llama-3.3-70b-instruct', name: 'Llama 3.3 70B' }
+  { id: 'openai/gpt-4o-mini', name: 'ChatGPT 4o Mini' },
+  { id: 'google/gemini-flash-1.5-8b', name: 'Gemini 1.5 Flash' },
+  { id: 'anthropic/claude-3.5-sonnet:beta', name: 'Claude 3.5 Sonnet' },
+  { id: 'deepseek/deepseek-chat', name: 'DeepSeek V3' }
 ];
 
 export default function ChatPage() {

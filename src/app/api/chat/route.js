@@ -4,7 +4,14 @@ export async function POST(req) {
   try {
     const { messages, model } = await req.json();
 
-    const apiKey = process.env.OPENROUTER_API_KEY || "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";
+    const apiKey = process.env.OPENROUTER_API_KEY;
+
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: "کلیلا API د Vercel یان .env.local دا نەهاتییە دیتن." },
+        { status: 500 }
+      );
+    }
 
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
@@ -15,16 +22,16 @@ export async function POST(req) {
         "X-Title": "IPBITS AI Hub",
       },
       body: JSON.stringify({
- model: model || "google/gemini-2.0-flash-001",
-  messages: messages,
-}),
+        model: model || "openai/gpt-4o-mini",
+        messages: messages,
+      }),
     });
 
     const data = await response.json();
 
     if (!response.ok) {
       console.error("OpenRouter API Error:", data);
-      const errMsg = data.error?.message || "ئاریشەیەک د سێرڤەرێ زیرەکیێ دا هەیە";
+      const errMsg = data.error?.message || "ئاریشەیەک د سێرڤەرێ OpenRouter دا هەیە";
       return NextResponse.json({ error: errMsg }, { status: response.status });
     }
 

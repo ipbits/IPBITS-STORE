@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   ShoppingBag, CheckCircle2, Trash2, Plus, Sparkles, Send, 
-  ShieldCheck, MessageCircle, Copy, Check, Flame, UploadCloud, X, RefreshCw
+  ShieldCheck, MessageCircle, Copy, Check, Flame, UploadCloud, X, RefreshCw, Lock, Zap
 } from 'lucide-react';
 
 // لۆگۆیێ فەرمی یێ IPBITS
@@ -15,47 +15,43 @@ const IPBitsLogo = () => (
 );
 
 // -------------------------------------------------------------
-// لیستا بەرهەم و پشکدارییان (تنێ ب بهایێ دیناری IQD)
+// لیستا بەرهەم و پشکدارییان
 const PRODUCTS = [
-  // پشکداریا نوی یا گشتگیر ل دەستپێکێ زێدە بکە
+  // ئۆفەرا سەرەکی و چالاک (بتنێ ئەڤە یا ڤەکرییە)
   { 
-    id: 'all_in_one_ai', 
-    name: 'پاکێجا گشتگیر یا AI (زیاد ژ 50 مۆدێلان)', 
+    id: 'super_ai_bundle_200', 
+    name: 'ئۆفەرا زێڕین: زێدەتر ژ ٢٠٠ ماڵپەڕ و مۆدێلێن ژیرییا دەستکرد (AI)', 
+    description: 'ب بهایەکی کو کەس باوەر ناکەت! بێ سنور، وێنە، کۆد، دەنگ، چات و شیکار د ئێک ئەکاونت دا.',
     priceIQD: 15000, 
-    category: 'ئۆفەرێ تایبەت', 
-    badge: 'پڕفرۆشترین 🔥', 
-    isBundle: true 
+    category: 'ئۆفەرا سەرەکی 🔥', 
+    badge: 'ئۆفەرا تایبەت و چاڤەڕوانکری 👑', 
+    isBundle: true,
+    isOpen: true 
   },
 
-  // بەرهەمێن دی یێن تە...
-  // ...
-  // ژیرییا دەستکرد (AI)
-  { id: 'chatgpt', name: 'ChatGPT Plus', priceIQD: 35000, category: 'هاریکارێ AI', badge: 'فەرمی' },
-  { id: 'claude', name: 'Claude Pro', priceIQD: 35000, category: 'هاریکارێ AI', badge: 'فەرمی' },
-  { id: 'google_flow', name: 'گووگڵ فڵۆ (Google Flow AI)', priceIQD: 25000, category: 'هاریکارێ AI', badge: 'فەرمی' },
-  { id: 'elevenlabs', name: 'ElevenLabs AI', priceIQD: 26250, category: 'دەنگێ AI', badge: 'فەرمی' },
-  { id: 'kling', name: 'Kling AI Video', priceIQD: 21000, category: 'ڤیدیۆیا AI', badge: 'فەرمی' },
+  // بەرهەمێن دی (هەمی قوفڵکرینە ل سەر نڤیسایە: ل نێزیک)
+  { id: 'chatgpt', name: 'ChatGPT Plus (GPT-4o)', priceIQD: 35000, category: 'هاریکارێ AI', badge: 'ل نێزیک ⏳', isOpen: false },
+  { id: 'claude', name: 'Claude Pro (Claude 3.5 Sonnet)', priceIQD: 35000, category: 'هاریکارێ AI', badge: 'ل نێزیک ⏳', isOpen: false },
+  { id: 'google_flow', name: 'گووگڵ فڵۆ (Google Flow AI)', priceIQD: 25000, category: 'هاریکارێ AI', badge: 'ل نێزیک ⏳', isOpen: false },
+  { id: 'elevenlabs', name: 'ElevenLabs AI (دەنگێ زیرەک)', priceIQD: 26250, category: 'دەنگێ AI', badge: 'ل نێزیک ⏳', isOpen: false },
+  { id: 'kling', name: 'Kling AI Video (ڤیدیۆیا AI)', priceIQD: 21000, category: 'ڤیدیۆیا AI', badge: 'ل نێزیک ⏳', isOpen: false },
 
   // مۆنتاژ، دیزاین و خزمەتگوزاریێن دارایی
-  { id: 'capcut', name: 'کاپ کات پرۆ (CapCut Pro)', priceIQD: 15000, category: 'مۆنتاژ و ڤیدیۆ', badge: 'فەرمی' },
-  { id: 'canva', name: 'Canva Pro', priceIQD: 8750, category: 'دیزاین', badge: 'تایبەت / تیم' },
-  { id: 'paypal_acc', name: 'چێکرنا ئەکاونتێن پەیپال (PayPal)', priceIQD: 20000, category: 'خزمەتگوزاری دارایی', badge: 'تایبەت و پشکنین' },
+  { id: 'canva', name: 'Canva Pro (کانڤا پرۆ)', priceIQD: 8750, category: 'دیزاین', badge: 'ل نێزیک ⏳', isOpen: false },
+  { id: 'capcut', name: 'کاپ کات پرۆ (CapCut Pro)', priceIQD: 15000, category: 'مۆنتاژ و ڤیدیۆ', badge: 'ل نێزیک ⏳', isOpen: false },
+  { id: 'paypal_acc', name: 'چێکرنا ئەکاونتێن پەیپال (PayPal)', priceIQD: 20000, category: 'خزمەتگوزاری دارایی', badge: 'ل نێزیک ⏳', isOpen: false },
 
   // سینەما، فلم و زنجیرە
-  { id: 'netflix', name: 'Netflix Premium', priceIQD: 7000, category: 'فلم و زنجیرە', badge: 'پرۆفایلێ تایبەت' },
-  { id: 'shahid_vip', name: 'شاهد ڤی ئای پی (Shahid VIP)', priceIQD: 13500, category: 'فلم و زنجیرە', badge: 'فەرمی' },
+  { id: 'netflix', name: 'Netflix Premium (نێتفلێکس)', priceIQD: 7000, category: 'فلم و زنجیرە', badge: 'ل نێزیک ⏳', isOpen: false },
+  { id: 'shahid_vip', name: 'شاهد ڤی ئای پی (Shahid VIP)', priceIQD: 13500, category: 'فلم و زنجیرە', badge: 'ل نێزیک ⏳', isOpen: false },
 
   // دەنگ و میوزیک
-  { id: 'apple_music', name: 'ئەپڵ میوزیک (Apple Music)', priceIQD: 7000, category: 'موزیک و دەنگ', badge: 'فەرمی' },
-  { id: 'spotify', name: 'سپۆتیفای پریمێیۆم (Spotify Premium)', priceIQD: 13000, category: 'موزیک و دەنگ', badge: 'فەرمی' },
-  { id: 'youtube_music', name: 'یوتیوب پریمێیۆم و میوزیک (YouTube Premium)', priceIQD: 13000, category: 'موزیک و دەنگ', badge: 'فەرمی' },
+  { id: 'spotify', name: 'سپۆتیفای پریمێیۆم (Spotify Premium)', priceIQD: 13000, category: 'موزیک و دەنگ', badge: 'ل نێزیک ⏳', isOpen: false },
+  { id: 'apple_music', name: 'ئەپڵ میوزیک (Apple Music)', priceIQD: 7000, category: 'موزیک و دەنگ', badge: 'ل نێزیک ⏳', isOpen: false },
+  { id: 'youtube_music', name: 'یوتیوب پریمێیۆم (YouTube Premium)', priceIQD: 13000, category: 'موزیک و دەنگ', badge: 'ل نێزیک ⏳', isOpen: false },
 
   // گەیمینگ
-  { id: 'ps_plus', name: 'پلەی ستەیشن پڵەس (PlayStation Plus)', priceIQD: 22000, category: 'گەیمینگ', badge: 'فەرمی' },
-
-  // ئۆفەرێن تایبەت (Bundles)
-  { id: 'bundle_ai', name: 'پاکێجا AI VIP (ChatGPT + Claude)', priceIQD: 63000, category: 'ئۆفەرێ تایبەت', badge: 'داشکاندن 🔥', isBundle: true },
-  { id: 'bundle_creator', name: 'پاکێجا دروستکەران (Canva + ElevenLabs)', priceIQD: 31500, category: 'ئۆفەرێ تایبەت', badge: 'داشکاندن 🔥', isBundle: true }
+  { id: 'ps_plus', name: 'پلەی ستەیشن پڵەس (PlayStation Plus)', priceIQD: 22000, category: 'گەیمینگ', badge: 'ل نێزیک ⏳', isOpen: false }
 ];
 
 // زانیاریێن ئەکاونتێن پارەدانێ
@@ -114,6 +110,7 @@ export default function StorePage() {
   };
 
   const addToCart = (product) => {
+    if (!product.isOpen) return;
     if (!cart.some((item) => item.id === product.id)) {
       setCart([...cart, product]);
     }
@@ -161,7 +158,7 @@ export default function StorePage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (cart.length === 0) {
-      alert('بێ زەحمەت، پشکدارییەکێ زێدە بکە د سەبەتێ دا!');
+      alert('بێ زەحمەت، ئۆفەرا زێڕین زێدە بکە د سەبەتێ دا!');
       return;
     }
 
@@ -201,7 +198,7 @@ export default function StorePage() {
 
   const sendToWhatsApp = () => {
     if (!lastOrder) return;
-    const msg = `سڵاڤ، من داخوازییەک تۆمار کر ل IPBITS STORE:%0A%0A👤 ناڤ: ${lastOrder.name}%0A📱 ژمارە: ${lastOrder.phone}%0A📦 پشکداری: ${lastOrder.items}%0A💰 کۆم: ${lastOrder.totalIQD.toLocaleString()} IQD%0A💳 رێکا پارەدانێ: ${lastOrder.paymentMethod}%0A🧾 کۆدێ وەسڵێ: ${lastOrder.transactionId}`;
+    const msg = `سڵاڤ، من داخوازییا ئۆفەرا AI تۆمار کر ل IPBITS STORE:%0A%0A👤 ناڤ: ${lastOrder.name}%0A📱 ژمارە: ${lastOrder.phone}%0A📦 پشکداری: ${lastOrder.items}%0A💰 کۆم: ${lastOrder.totalIQD.toLocaleString()} IQD%0A💳 رێکا پارەدانێ: ${lastOrder.paymentMethod}%0A🧾 کۆدێ وەسڵێ: ${lastOrder.transactionId}`;
     window.open(`https://wa.me/9647504060378?text=${msg}`, '_blank');
   };
 
@@ -221,7 +218,6 @@ export default function StorePage() {
             </div>
           </div>
 
-          {/* دوگما سەبەتێ ل سەری */}
           <button 
             type="button"
             onClick={scrollToCart}
@@ -238,17 +234,20 @@ export default function StorePage() {
         
         {/* سەردێڕ و ناساندن */}
         <div ref={productsSectionRef} className="text-center max-w-3xl mx-auto mb-14">
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-950/80 to-indigo-950/80 text-purple-300 px-4 py-1.5 rounded-full text-xs font-bold mb-5 border border-purple-500/30 shadow-lg shadow-purple-900/20 animate-pulse">
-            <Sparkles size={14} className="text-purple-400" />
-            <span>فەرمی، ب لەز و ب گرەنتی</span>
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-950/80 via-fuchsia-950/80 to-indigo-950/80 text-purple-300 px-5 py-2 rounded-full text-xs font-black mb-5 border border-purple-500/40 shadow-xl shadow-purple-900/30 animate-pulse">
+            <Sparkles size={15} className="text-amber-400" />
+            <span>ئۆفەرا مەزن یا تایبەت بۆ دەمەکێ کاتی ڤەبوو! 🔥</span>
           </div>
           
           <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-white mb-4 leading-tight">
-            پشکدارییا خو هەلبژێرە و ئێکسەر دەستڤەبینە
+            پتر ژ ٢٠٠ سایتێن ژیرییا دەستکرد <br className="hidden sm:inline"/> 
+            <span className="bg-gradient-to-r from-purple-400 via-fuchsia-400 to-indigo-400 bg-clip-text text-transparent">
+              ب بهایەکی کو کەس باوەر ناکەت!
+            </span>
           </h2>
           
           <p className="text-slate-400 text-sm sm:text-base leading-relaxed max-w-xl mx-auto font-normal">
-            دەستڤەئینانا ئەکاونت و پشکداریێن فەرمی ب کێمترین دەم و ب پشتەڤانییا بەردەوام
+            ئێک ئەکاونت بۆ هەمی کارێن تە: نڤیسین، کۆدینگ، مۆنتاژ، وێنە و دەنگ ب بهایێ چەند سەنتان.
           </p>
         </div>
 
@@ -258,55 +257,81 @@ export default function StorePage() {
           <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
             {PRODUCTS.map((product) => {
               const inCart = cart.some(item => item.id === product.id);
+              const isOpen = product.isOpen;
+
               return (
                 <div 
                   key={product.id}
-                  className={`p-6 rounded-3xl border transition-all duration-300 flex flex-col justify-between ${
-                    product.isBundle 
-                      ? 'bg-gradient-to-b from-purple-950/40 to-slate-900/80 border-purple-500/40 shadow-lg shadow-purple-950/20' 
-                      : inCart 
-                        ? 'bg-purple-950/30 border-purple-500/60 shadow-xl shadow-purple-950/30 ring-1 ring-purple-500/30' 
-                        : 'bg-slate-900/50 border-slate-800/80 hover:border-slate-700 hover:bg-slate-900/80'
+                  className={`p-6 rounded-3xl border transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
+                    isOpen 
+                      ? 'sm:col-span-2 bg-gradient-to-br from-purple-950/60 via-slate-900/90 to-indigo-950/60 border-purple-500/60 shadow-2xl shadow-purple-950/40 ring-1 ring-purple-500/40' 
+                      : 'bg-slate-900/30 border-slate-800/50 opacity-60 grayscale hover:grayscale-0 transition-all'
                   }`}
                 >
                   <div>
                     <div className="flex items-center justify-between gap-2 mb-3.5">
-                      <span className={`text-[11px] font-bold px-3 py-1 rounded-full border ${
-                        product.isBundle 
-                          ? 'bg-amber-500/20 text-amber-300 border-amber-500/30 flex items-center gap-1' 
-                          : 'text-purple-300 bg-purple-900/40 border-purple-700/40'
+                      <span className={`text-[11px] font-bold px-3.5 py-1 rounded-full border ${
+                        isOpen
+                          ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 flex items-center gap-1 shadow-sm' 
+                          : 'text-slate-400 bg-slate-800/60 border-slate-700/60 flex items-center gap-1'
                       }`}>
-                        {product.isBundle && <Flame size={12} />}
+                        {isOpen ? <Flame size={13} className="text-amber-400" /> : <Lock size={12} />}
                         {product.badge}
                       </span>
                       <span className="text-xs text-slate-400 font-medium">{product.category}</span>
                     </div>
-                    <h3 className="text-lg font-bold text-white mb-2">{product.name}</h3>
+
+                    <h3 className={`font-black text-white mb-2 ${isOpen ? 'text-xl sm:text-2xl text-purple-200' : 'text-base'}`}>
+                      {product.name}
+                    </h3>
+
+                    {product.description && (
+                      <p className="text-xs sm:text-sm text-slate-300 mb-4 leading-relaxed font-normal">
+                        {product.description}
+                      </p>
+                    )}
+
                     <div className="flex items-row items-baseline gap-2 mb-6">
-                      <span className="text-2xl font-black text-white">{product.priceIQD.toLocaleString()} IQD</span>
+                      {isOpen ? (
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-indigo-200">
+                            {product.priceIQD.toLocaleString()} IQD
+                          </span>
+                          <span className="text-xs text-slate-400 line-through">65,000 IQD</span>
+                        </div>
+                      ) : (
+                        <span className="text-xl font-bold text-slate-500">{product.priceIQD.toLocaleString()} IQD</span>
+                      )}
                     </div>
                   </div>
 
-                  <button
-                    onClick={() => inCart ? removeFromCart(product.id) : addToCart(product)}
-                    className={`w-full py-3 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition-all ${
-                      inCart
-                        ? 'bg-rose-500/10 text-rose-400 border border-rose-500/30 hover:bg-rose-500/20'
-                        : product.isBundle
-                          ? 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-lg shadow-purple-600/30'
-                          : 'bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-600/30'
-                    }`}
-                  >
-                    {inCart ? (
-                      <>
-                        <Trash2 size={16} /> لابرن ژ سەبەتێ
-                      </>
-                    ) : (
-                      <>
-                        <Plus size={16} /> زێدەکرن بۆ سەبەتێ
-                      </>
-                    )}
-                  </button>
+                  {isOpen ? (
+                    <button
+                      onClick={() => inCart ? removeFromCart(product.id) : addToCart(product)}
+                      className={`w-full py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                        inCart
+                          ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40 hover:bg-rose-500/30'
+                          : 'bg-gradient-to-r from-purple-600 via-fuchsia-600 to-indigo-600 hover:opacity-90 text-white shadow-xl shadow-purple-600/40 active:scale-98'
+                      }`}
+                    >
+                      {inCart ? (
+                        <>
+                          <Trash2 size={16} /> لابرن ژ سەبەتێ
+                        </>
+                      ) : (
+                        <>
+                          <Zap size={16} className="text-amber-300 fill-amber-300" /> دەستڤەئینانا ئۆفەرێ (زێدەکرن بۆ سەبەتێ)
+                        </>
+                      )}
+                    </button>
+                  ) : (
+                    <button
+                      disabled
+                      className="w-full py-3 rounded-2xl font-bold text-xs bg-slate-800/40 border border-slate-800 text-slate-500 flex items-center justify-center gap-2 cursor-not-allowed"
+                    >
+                      <Lock size={14} /> ل نێزیک دهێتە بەردەستکرن
+                    </button>
+                  )}
                 </div>
               );
             })}
@@ -319,7 +344,7 @@ export default function StorePage() {
                 <ShoppingBag className="text-purple-400" size={20} /> سەبەتە و داخوازی
               </h3>
               <span className="text-xs bg-slate-800/90 text-purple-300 border border-purple-500/20 px-2.5 py-1 rounded-full font-bold">
-                {cart.length} بەرهەم
+                {cart.length} پشکداری
               </span>
             </div>
 
@@ -328,7 +353,7 @@ export default function StorePage() {
                 <CheckCircle2 className="w-16 h-16 text-emerald-400 mx-auto mb-3 animate-bounce" />
                 <h4 className="text-xl font-bold mb-1 text-white">داخوازی ب سەرکەفتی هاتە فرێکرن!</h4>
                 <p className="text-slate-400 text-xs leading-relaxed mb-6">
-                  زانیاریێن داخوازییا تە هاتنە تۆمارکرن. بۆ وەرگرتنا زانیاریێن ئەکاونتی ب لەزتر، دشێی ئێکسەر مەساجێ بۆ واتساپێ بنێری:
+                  زانیاریێن داخوازییا تە هاتنە تۆمارکرن. بۆ وەرگرتنا ئەکاونتی د چەند خۆلەکاندا، پەیامەکێ بۆ واتساپی بنێرە:
                 </p>
 
                 <button
@@ -346,19 +371,19 @@ export default function StorePage() {
                   className="w-full bg-slate-800 hover:bg-slate-700 text-purple-300 border border-purple-500/30 font-bold py-3 rounded-2xl flex items-center justify-center gap-2 text-xs transition-all cursor-pointer shadow-md"
                 >
                   <RefreshCw size={14} className="text-purple-400" />
-                  <span>داخوازیەکا دی تۆمار بکە</span>
+                  <span>تۆمارکرنا داخوازیەکا نوی</span>
                 </button>
               </div>
             ) : (
               <div>
                 {cart.length === 0 ? (
                   <p className="text-slate-500 text-xs text-center py-7 border border-dashed border-slate-800 rounded-2xl mb-5 font-medium">
-                    سەبەتە یا ڤالایە، پشکدارییەکێ هەلبژێرە.
+                    سەبەتە یا ڤالایە، ئۆفەرا زێڕین زێدە بکە.
                   </p>
                 ) : (
                   <div className="space-y-2 mb-5 max-h-40 overflow-y-auto pr-1">
                     {cart.map((item) => (
-                      <div key={item.id} className="flex justify-between items-center bg-slate-950/70 p-3 rounded-xl border border-slate-800 text-xs">
+                      <div key={item.id} className="flex justify-between items-center bg-slate-950/70 p-3 rounded-xl border border-purple-500/30 text-xs">
                         <span className="font-bold text-slate-200">{item.name}</span>
                         <div className="flex items-center gap-2">
                           <span className="text-purple-400 font-bold">{item.priceIQD.toLocaleString()} IQD</span>
@@ -373,7 +398,7 @@ export default function StorePage() {
 
                 <div className="bg-slate-950/90 p-4 rounded-2xl border border-slate-800/80 mb-5">
                   <div className="flex justify-between text-base font-extrabold text-white">
-                    <span>کۆمێ ب دینار:</span>
+                    <span>کۆمێ پارەی:</span>
                     <span className="text-purple-400 font-black">{totalIQD.toLocaleString()} IQD</span>
                   </div>
                 </div>
@@ -438,7 +463,7 @@ export default function StorePage() {
                     <input
                       required
                       type="text"
-                      placeholder="کۆدێ وەسڵا پارەدانێ یان ترانزاکشن بنڤیسە..."
+                      placeholder="کۆدێ وەسڵا پارەدانێ بنڤیسە..."
                       className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-purple-500 text-white"
                       value={formData.transactionId}
                       onChange={(e) => setFormData({ ...formData, transactionId: e.target.value })}
@@ -469,18 +494,18 @@ export default function StorePage() {
                   <button
                     type="submit"
                     disabled={loading || cart.length === 0}
-                    className="w-full bg-purple-600 hover:bg-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-bold py-3.5 rounded-2xl flex items-center justify-center gap-2 text-xs shadow-lg shadow-purple-600/30 mt-2 text-white cursor-pointer"
+                    className="w-full bg-gradient-to-r from-purple-600 via-fuchsia-600 to-indigo-600 hover:opacity-95 disabled:opacity-40 disabled:cursor-not-allowed transition-all font-black py-4 rounded-2xl flex items-center justify-center gap-2 text-xs shadow-xl shadow-purple-600/30 mt-2 text-white cursor-pointer"
                   >
                     {loading ? 'تکایە چاڤەرێ بە...' : (
                       <>
-                        <span>تمامکرنا داخوازیێ</span>
+                        <span>تەمامکرن و ناردنا داخوازیێ</span>
                         <Send size={14} />
                       </>
                     )}
                   </button>
 
                   <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-500 pt-1 font-medium">
-                    <ShieldCheck size={13} className="text-purple-400" /> هەمی پشکداری ب گەرەنتی نە
+                    <ShieldCheck size={13} className="text-purple-400" /> هەمی پشکداری ب گرەنتی و پشتەڤانییا بەردەوامن
                   </div>
                 </form>
               </div>

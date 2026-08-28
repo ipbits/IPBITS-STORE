@@ -12,17 +12,20 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: 'IPBITS STORE | باشترین خزمەتگوزاریێن دیجیتال و ژیرییا دەستکرد',
-  description: 'دەستڤەئینانا ئەکاونت و پشکداریێن فەرمی ب کێمترین دەم و ب پشتەڤانییا بەردەوام',
+  title: 'IPBITS STORE | پلاتفۆڕما ژیرییا دەستکرد و خزمەتگوزاریێن دیجیتاڵ',
+  description: 'دەستڤەئینانا ئەکاونت و پشکداریێن فەرمی یێن ژیرییا دەستکرد ب کێمترین دەم و ب پشتەڤانییا بەردەوام',
 };
 
 export default function RootLayout({ children }) {
   return (
     <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      lang="ku"
+      dir="rtl"
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased bg-[#070913] text-white`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col bg-[#070913] text-slate-100 font-sans selection:bg-purple-600 selection:text-white">
+        {children}
+      </body>
     </html>
   );
 }

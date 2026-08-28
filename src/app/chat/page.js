@@ -5,7 +5,7 @@ import { Send, Bot, User, Sparkles } from 'lucide-react';
 const MODELS = [
   { id: 'openai/gpt-4o-mini', name: 'ChatGPT 4o Mini' },
   { id: 'google/gemini-flash-1.5-8b', name: 'Gemini 1.5 Flash' },
-  { id: 'anthropic/claude-3.5-sonnet', name: 'Claude 3.5 Sonnet' },
+  { id: 'anthropic/claude-3.5-sonnet-20241022', name: 'Claude 3.5 Sonnet' },
   { id: 'deepseek/deepseek-chat', name: 'DeepSeek V3' }
 ];
 

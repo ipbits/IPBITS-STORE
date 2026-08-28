@@ -4,7 +4,6 @@ import {
   ShoppingBag, CheckCircle2, Trash2, Sparkles, Send, 
   ShieldCheck, MessageCircle, Copy, Check, Flame, UploadCloud, X, RefreshCw, Lock, Zap, Clock, Instagram
 } from 'lucide-react';
-
 const IPBitsLogo = () => (
   <img 
     src="/logo.png" 

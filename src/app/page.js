@@ -1,3 +1,203 @@
+'use client';
+import React, { useState, useEffect, useRef } from 'react';
+import { 
+  ShoppingBag, CheckCircle2, Trash2, Sparkles, Send, 
+  ShieldCheck, MessageCircle, Copy, Check, Flame, UploadCloud, X, RefreshCw, Lock, Zap, Clock
+} from 'lucide-react';
+
+const TRANSLATIONS = {
+  ku: {
+    dir: 'rtl',
+    storeSubtitle: 'باشترین خزمەتگوزاریێن دیجیتال و ژیرییا دەستکرد',
+    heroBadge: 'ئۆفەرا مەزن یا تایبەت بۆ دەمەکێ کاتی ڤەبوو! 🔥',
+    heroTitle1: 'پتر ژ ٢٠٠ سایتێن ژیرییا دەستکرد',
+    heroTitle2: 'ب بهایەکی کو کەس باوەر ناکەت!',
+    heroDesc: 'ئێک ئەکاونت بۆ هەمی کارێن تە: نڤیسین، کۆدینگ، مۆنتاژ، وێنە و شیکاریا فایلان. دەمێ خو هەلبژێرە:',
+    mainOfferBadge: 'ئۆفەرا سەرەکی و چاڤەڕوانکری 👑',
+    officialBadge: 'فەرمی و دەستبەجێ',
+    mainOfferTitle: 'پاکێجا گشتگیر: پتر ژ ٢٠٠ ماڵپەڕ و مۆدێلێن AI',
+    mainOfferDesc: 'دەستڤەئینانا هەمی مۆدێلێن پێشکەفتی (DeepSeek R1/V3, Claude 3.5, ChatGPT 4o Mini, Gemini 2.0, Flux 🎨) بێی پێدڤیبوون ب چەندین پشکدارییان.',
+    selectDuration: 'مەودایێ دەمی هەلبژێرە:',
+    selectedPriceFor: 'بهایێ پاکێجا هەلبژارتی',
+    addToCartBtn: 'دەستڤەئینان:',
+    inCartBtn: 'د سەبەتێ دا یا زێدەکرییە (داگرتن بۆ گوهۆڕینێ)',
+    comingSoonBtn: 'ل نێزیک دهێتە بەردەستکرن',
+    comingSoonBadge: 'ل نێزیک ⏳',
+    cartTitle: 'سەبەتە و داخوازی',
+    subscriptions: 'پشکداری',
+    cartEmpty: 'سەبەتە یا ڤالایە، پاکێجەکێ هەلبژێرە.',
+    totalPrice: 'کۆمێ پارەی:',
+    labelName: 'ناڤێ تە',
+    placeholderName: 'ناڤێ سیانی بنڤیسە...',
+    labelPhone: 'ژمارا واتساپی',
+    labelPayment: 'رێکا پارەدانێ',
+    labelTxId: 'کۆدێ وەسڵێ (Transaction ID / TxID / ئیمەیل)',
+    placeholderTxId: 'کۆدێ وەسڵا پارەدانێ بنڤیسە...',
+    labelUpload: 'وێنەیێ وەسڵێ (ئارەزوومەندانە)',
+    uploadPlaceholder: 'بارکرنا وێنەیێ وەسڵێ (Screenshot)',
+    submitBtn: 'تەمامکرن و ناردنا داخوازیێ',
+    submittingBtn: 'تکایە چاڤەرێ بە...',
+    guaranteeText: 'هەمی پشکداری ب گرەنتی و پشتەڤانییا بەردەوامن',
+    successTitle: 'داخوازی ب سەرکەفتی هاتە فرێکرن!',
+    successDesc: 'زانیاریێن داخوازییا تە هاتنە تۆمارکرن. بۆ وەرگرتنا ئەکاونت و پاسوۆردی، مەساجێ بۆ واتساپێ بنێرە:',
+    whatsappBtn: 'پەیوەندی ب واتساپی بکە',
+    newOrderBtn: 'تۆمارکرنا داخوازیەکا نوی',
+    copyBtn: 'کۆپی بکە',
+    copiedBtn: 'هاتە کۆپیکرن',
+    alertEmptyCart: 'بێ زەحمەت، ئۆفەرەکێ زێدە بکە د سەبەتێ دا!',
+    alertError: 'خەلەتییەک چێبوو د فرێکرنا داخوازیێ دا!',
+    alertServer: 'ئاریشەیەک د پەیوەندیا سێرڤەری دا ڕویدا!',
+    allRightsReserved: 'هەمی ماف پاراستینە.',
+    tiers: {
+      '1_day': { name: 'تێست (١ ڕۆژ)', duration: '٢٤ دەمژمێر', badge: 'تێست و ب لەز ⚡' },
+      '7_days': { name: 'هەفتانە (٧ ڕۆژ)', duration: '١ هەفتە', badge: 'گونجای 👍' },
+      '30_days': { name: 'هەیڤانە (٣٠ ڕۆژ)', duration: '١ هەیڤ', badge: 'پڕفرۆشترین 🔥' },
+      '90_days': { name: '٣ هەیڤی (٩٠ ڕۆژ)', duration: '٣ هەیڤ', badge: 'داشکاندن ٪٥٠ 🌟' },
+      '1_year': { name: 'ساڵانە (١ ساڵ) 👑', duration: '١ ساڵا تەمام', badge: 'VIP بێ سنور 👑' }
+    }
+  },
+  ar: {
+    dir: 'rtl',
+    storeSubtitle: 'أفضل الخدمات الرقمية والذكاء الاصطناعي',
+    heroBadge: 'العرض الأكبر متاح الآن لفترة محدودة! 🔥',
+    heroTitle1: 'أكثر من ٢٠٠ موقع ذكاء اصطناعي',
+    heroTitle2: 'بسعر لا يُصدق!',
+    heroDesc: 'حساب واحد لجميع مهامك: الكتابة، البرمجة، المونتاج، الصور وتحليل الملفات. اختر مدتك:',
+    mainOfferBadge: 'العرض الرئيسي المنتظر 👑',
+    officialBadge: 'رسمي وفوري',
+    mainOfferTitle: 'الباقة الشاملة: أكثر من ٢٠٠ موقع ونموذج AI',
+    mainOfferDesc: 'وصول إلى جميع النماذج المتقدمة (DeepSeek R1/V3, Claude 3.5, ChatGPT 4o Mini, Gemini 2.0, Flux 🎨) دون الحاجة لاشتراكات متعددة.',
+    selectDuration: 'اختر المدة الزمنية:',
+    selectedPriceFor: 'سعر الباقة المختارة',
+    addToCartBtn: 'الحصول على العرض:',
+    inCartBtn: 'مضاف إلى السلة (انقر للتغيير)',
+    comingSoonBtn: 'سيتوفر قريباً',
+    comingSoonBadge: 'قريباً ⏳',
+    cartTitle: 'السلة والطلب',
+    subscriptions: 'اشتراكات',
+    cartEmpty: 'السلة فارغة، اختر إحدى الباقات.',
+    totalPrice: 'المجموع الكلي:',
+    labelName: 'الاسم الكامل',
+    placeholderName: 'اكتب اسمك الثلاثي...',
+    labelPhone: 'رقم الواتساب',
+    labelPayment: 'طريقة الدفع',
+    labelTxId: 'رمز الإشعار / التحويل (Transaction ID / TxID)',
+    placeholderTxId: 'اكتب رقم أو رمز وصل التحويل...',
+    labelUpload: 'صورة الوصل (اختياري)',
+    uploadPlaceholder: 'رفع صورة الوصل (Screenshot)',
+    submitBtn: 'إتمام وإرسال الطلب',
+    submittingBtn: 'يرجى الانتظار...',
+    guaranteeText: 'جميع الاشتراكات بضمان كامل ودعم مستمر',
+    successTitle: 'تم إرسال الطلب بنجاح!',
+    successDesc: 'تم حفظ تفاصيل طلبك. لاستلام الحساب وكلمة المرور فوراً، راسلنا عبر واتساب:',
+    whatsappBtn: 'تواصل عبر واتساب',
+    newOrderBtn: 'تسجيل طلب جديد',
+    copyBtn: 'نسخ',
+    copiedBtn: 'تم النسخ',
+    alertEmptyCart: 'يرجى إضافة باقة إلى السلة أولاً!',
+    alertError: 'حدث خطأ أثناء إرسال الطلب!',
+    alertServer: 'حدث خطأ في الاتصال بالخادم!',
+    allRightsReserved: 'جميع الحقوق محفوظة.',
+    tiers: {
+      '1_day': { name: 'تجربة (يوم واحد)', duration: '٢٤ ساعة', badge: 'سريع وتجريبي ⚡' },
+      '7_days': { name: 'أسبوعي (٧ أيام)', duration: 'أسبوع واحد', badge: 'اقتصادي 👍' },
+      '30_days': { name: 'شهري (٣٠ يوماً)', duration: 'شهر كامل', badge: 'الأكثر طلباً 🔥' },
+      '90_days': { name: '٣ أشهر (٩٠ يوماً)', duration: '٣ أشهر', badge: 'خصم ٥٠٪ 🌟' },
+      '1_year': { name: 'سنوي (سنة كاملة) 👑', duration: 'سنة كاملة', badge: 'VIP بلا حدود 👑' }
+    }
+  },
+  en: {
+    dir: 'ltr',
+    storeSubtitle: 'Premium Digital & Artificial Intelligence Services',
+    heroBadge: 'Special Mega Offer Live for a Limited Time! 🔥',
+    heroTitle1: 'Over 200+ AI Platforms & Models',
+    heroTitle2: 'At an Unbelievable Price!',
+    heroDesc: 'One single account for all your workflows: Writing, Coding, Video Editing, Images, and File Analysis. Choose your duration:',
+    mainOfferBadge: 'Featured & Awaited Offer 👑',
+    officialBadge: 'Official & Instant',
+    mainOfferTitle: 'All-In-One Hub: Over 200+ AI Models',
+    mainOfferDesc: 'Instant access to all top-tier models (DeepSeek R1/V3, Claude 3.5, ChatGPT 4o Mini, Gemini 2.0, Flux 🎨) without multiple subscriptions.',
+    selectDuration: 'Choose Plan Duration:',
+    selectedPriceFor: 'Selected Plan Price',
+    addToCartBtn: 'Get Access:',
+    inCartBtn: 'Added to Cart (Click to update)',
+    comingSoonBtn: 'Coming Soon',
+    comingSoonBadge: 'Coming Soon ⏳',
+    cartTitle: 'Cart & Checkout',
+    subscriptions: 'Items',
+    cartEmpty: 'Your cart is empty, please select a plan.',
+    totalPrice: 'Total Amount:',
+    labelName: 'Your Full Name',
+    placeholderName: 'Enter your full name...',
+    labelPhone: 'WhatsApp Number',
+    labelPayment: 'Payment Method',
+    labelTxId: 'Transaction ID / TxID / Email',
+    placeholderTxId: 'Enter transaction confirmation code...',
+    labelUpload: 'Payment Receipt (Optional)',
+    uploadPlaceholder: 'Upload receipt screenshot',
+    submitBtn: 'Complete & Submit Order',
+    submittingBtn: 'Please wait...',
+    guaranteeText: 'All subscriptions come with full warranty & 24/7 support',
+    successTitle: 'Order Placed Successfully!',
+    successDesc: 'Your order details have been saved. To receive your login details immediately, message us on WhatsApp:',
+    whatsappBtn: 'Contact via WhatsApp',
+    newOrderBtn: 'Place a New Order',
+    copyBtn: 'Copy',
+    copiedBtn: 'Copied',
+    alertEmptyCart: 'Please add a package to the cart first!',
+    alertError: 'An error occurred while submitting your order!',
+    alertServer: 'A server connection error occurred!',
+    allRightsReserved: 'All rights reserved.',
+    tiers: {
+      '1_day': { name: 'Trial (1 Day)', duration: '24 Hours', badge: 'Fast Trial ⚡' },
+      '7_days': { name: 'Weekly (7 Days)', duration: '1 Week', badge: 'Affordable 👍' },
+      '30_days': { name: 'Monthly (30 Days)', duration: '1 Month', badge: 'Best Seller 🔥' },
+      '90_days': { name: '3 Months (90 Days)', duration: '3 Months', badge: '50% OFF 🌟' },
+      '1_year': { name: 'Annual (1 Year) 👑', duration: 'Full Year', badge: 'Unlimited VIP 👑' }
+    }
+  }
+};
+
+const IPBitsLogo = () => (
+  <img 
+    src="/logo.png" 
+    alt="IPBITS Logo" 
+    className="w-12 h-12 rounded-2xl object-cover shadow-xl border border-purple-400/30 shrink-0" 
+  />
+);
+
+const AI_TIERS_DATA = [
+  { id: '1_day', priceIQD: 2500, oldPriceIQD: 5000 },
+  { id: '7_days', priceIQD: 5000, oldPriceIQD: 10000 },
+  { id: '30_days', priceIQD: 12000, oldPriceIQD: 25000 },
+  { id: '90_days', priceIQD: 25000, oldPriceIQD: 50000 },
+  { id: '1_year', priceIQD: 50000, oldPriceIQD: 120000 }
+];
+
+const LOCKED_PRODUCTS = [
+  { id: 'chatgpt', name: 'ChatGPT Plus (GPT-4o)', priceIQD: 35000, category: 'AI Assistant' },
+  { id: 'claude', name: 'Claude Pro (Claude 3.5 Sonnet)', priceIQD: 35000, category: 'AI Assistant' },
+  { id: 'google_flow', name: 'Google Flow AI', priceIQD: 25000, category: 'AI Assistant' },
+  { id: 'elevenlabs', name: 'ElevenLabs AI', priceIQD: 26250, category: 'AI Voice' },
+  { id: 'kling', name: 'Kling AI Video', priceIQD: 21000, category: 'AI Video' },
+  { id: 'canva', name: 'Canva Pro', priceIQD: 8750, category: 'Design' },
+  { id: 'capcut', name: 'CapCut Pro', priceIQD: 15000, category: 'Video Editing' },
+  { id: 'paypal_acc', name: 'PayPal Verified Account', priceIQD: 20000, category: 'Financial Service' },
+  { id: 'netflix', name: 'Netflix Premium', priceIQD: 7000, category: 'Cinema & Movies' },
+  { id: 'shahid_vip', name: 'Shahid VIP', priceIQD: 13500, category: 'Cinema & Movies' },
+  { id: 'spotify', name: 'Spotify Premium', priceIQD: 13000, category: 'Music & Audio' },
+  { id: 'apple_music', name: 'Apple Music', priceIQD: 7000, category: 'Music & Audio' },
+  { id: 'youtube_music', name: 'YouTube Premium', priceIQD: 13000, category: 'Music & Audio' },
+  { id: 'ps_plus', name: 'PlayStation Plus', priceIQD: 22000, category: 'Gaming' }
+];
+
+const PAYMENT_ACCOUNTS = {
+  FIB: { title: 'First Iraqi Bank (FIB)', number: '07504060378', note: 'Account / FIB: IPBITS' },
+  FastPay: { title: 'FastPay Wallet', number: '07504060378', note: 'FastPay Account' },
+  ZainCash: { title: 'Zain Cash', number: '07504060378', note: 'Zain Cash Wallet' },
+  PayPal: { title: 'PayPal', number: 'https://www.paypal.com/ncp/payment/VDDES8YRYJG46', note: 'Send via Friends & Family' },
+  USDT: { title: 'USDT (TRC20)', number: 'TUeqkjzFdD7b1EtnAJL9tbzB1uN8wDbU6T', note: 'TRC20 Network Only' }
+};
 export default function StorePage() {
   const [lang, setLang] = useState('ku');
   const t = TRANSLATIONS[lang];

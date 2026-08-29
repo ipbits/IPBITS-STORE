@@ -370,7 +370,7 @@ export default function StorePage() {
                   lang === 'ku' ? 'bg-purple-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
                 }`}
               >
-                کو
+                کوردى
               </button>
               <button
                 type="button"
@@ -379,7 +379,7 @@ export default function StorePage() {
                   lang === 'ar' ? 'bg-purple-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
                 }`}
               >
-                عر
+                عربي
               </button>
               <button
                 type="button"

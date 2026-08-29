@@ -344,17 +344,17 @@ export default function StorePage() {
   return (
     <div className="min-h-screen bg-[#070913] text-slate-100 font-sans selection:bg-purple-600 selection:text-white flex flex-col justify-between" dir={t.dir}>
       
-      {/* هێدەرێ پاراستی بۆ مۆبایل و دێسکتۆپێ */}
-      <nav className="border-b border-slate-800/80 bg-[#0c1022]/95 backdrop-blur-xl sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-2.5 sm:py-3">
+      {/* هێدەرێ سەرەکی - هەردەم لۆگۆ ل لایێ راستێ یە و دوگمەیێن زمانی ناچنە سەری */}
+      <header className="w-full border-b border-slate-800/80 bg-[#0c1022]/95 backdrop-blur-xl sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto px-3 sm:px-6 py-2.5 flex flex-col gap-2">
           
-          <div className="flex items-center justify-between gap-3">
-            {/* لۆگۆ و ناڤێ فرۆشگەهێ */}
+          {/* ڕێزا سەرێ: لۆگۆ + سەبەتە */}
+          <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-2.5 shrink-0">
               <img 
                 src="/logo.png" 
                 alt="IPBITS Logo" 
-                className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl object-cover shadow-lg border border-purple-400/30 shrink-0" 
+                className="w-10 h-10 rounded-xl object-cover shadow-lg border border-purple-400/30 shrink-0 block" 
               />
               <div className="flex flex-col">
                 <span className="text-base sm:text-xl font-black tracking-wide bg-gradient-to-r from-purple-400 via-fuchsia-300 to-indigo-300 bg-clip-text text-transparent leading-tight">
@@ -366,68 +366,23 @@ export default function StorePage() {
               </div>
             </div>
 
-            {/* زمان و سەبەتە بۆ کۆمپیۆتەری */}
-            <div className="hidden sm:flex items-center gap-3">
-              <div className="flex items-center bg-slate-900 border border-slate-800 rounded-xl p-1 shadow-inner">
-                <button
-                  type="button"
-                  onClick={() => setLang('ku')}
-                  className={`px-3 py-1 text-xs font-bold rounded-lg transition-all ${
-                    lang === 'ku' ? 'bg-purple-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  کوردی
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setLang('ar')}
-                  className={`px-3 py-1 text-xs font-bold rounded-lg transition-all ${
-                    lang === 'ar' ? 'bg-purple-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  عربي
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setLang('en')}
-                  className={`px-3 py-1 text-xs font-bold rounded-lg transition-all ${
-                    lang === 'en' ? 'bg-purple-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  EN
-                </button>
-              </div>
-
-              <button 
-                type="button"
-                onClick={scrollToCart}
-                className="flex items-center gap-2 bg-slate-900 hover:bg-purple-950/50 border border-purple-500/20 px-3.5 py-1.5 rounded-xl text-purple-300 font-bold text-sm shadow-inner transition-all shrink-0 cursor-pointer"
-              >
-                <ShoppingBag size={16} className="text-purple-400" />
-                <span>{cart.length}</span>
-              </button>
-            </div>
-
-            {/* سەبەتە بۆ مۆبایلێ */}
-            <div className="flex sm:hidden items-center">
-              <button 
-                type="button"
-                onClick={scrollToCart}
-                className="flex items-center gap-1.5 bg-slate-900 border border-purple-500/30 px-3 py-1.5 rounded-xl text-purple-300 font-bold text-xs shadow-inner"
-              >
-                <ShoppingBag size={15} className="text-purple-400" />
-                <span>{cart.length}</span>
-              </button>
-            </div>
+            <button 
+              type="button"
+              onClick={scrollToCart}
+              className="flex items-center gap-1.5 bg-slate-900 border border-purple-500/30 hover:border-purple-500 px-3 py-1.5 rounded-xl text-purple-300 font-bold text-xs shadow-inner cursor-pointer"
+            >
+              <ShoppingBag size={15} className="text-purple-400" />
+              <span>{cart.length}</span>
+            </button>
           </div>
 
-          {/* دوگمەیێن زمانی بۆ مۆبایلێ */}
-          <div className="flex sm:hidden items-center justify-center mt-2.5 pt-2 border-t border-slate-800/60">
-            <div className="flex items-center w-full bg-slate-900/90 border border-slate-800 rounded-xl p-0.5 shadow-inner">
+          {/* ڕێزا ژێرێ: دوگمەیێن زمانی */}
+          <div className="w-full flex items-center justify-center pt-1 border-t border-slate-800/50">
+            <div className="flex items-center w-full max-w-xs bg-slate-900 border border-slate-800 rounded-xl p-0.5 shadow-inner">
               <button
                 type="button"
                 onClick={() => setLang('ku')}
-                className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${
+                className={`flex-1 py-1 text-xs font-bold rounded-lg transition-all ${
                   lang === 'ku' ? 'bg-purple-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
                 }`}
               >
@@ -436,7 +391,7 @@ export default function StorePage() {
               <button
                 type="button"
                 onClick={() => setLang('ar')}
-                className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${
+                className={`flex-1 py-1 text-xs font-bold rounded-lg transition-all ${
                   lang === 'ar' ? 'bg-purple-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
                 }`}
               >
@@ -445,7 +400,7 @@ export default function StorePage() {
               <button
                 type="button"
                 onClick={() => setLang('en')}
-                className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${
+                className={`flex-1 py-1 text-xs font-bold rounded-lg transition-all ${
                   lang === 'en' ? 'bg-purple-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
                 }`}
               >
@@ -455,10 +410,10 @@ export default function StorePage() {
           </div>
 
         </div>
-      </nav>
+      </header>
 
       {/* ناڤەرۆکا سەرەکی */}
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 mt-6 sm:mt-12 mb-16 flex-1">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 mt-6 sm:mt-10 mb-16 flex-1">
         
         {/* سەردێڕ */}
         <div ref={productsSectionRef} className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">

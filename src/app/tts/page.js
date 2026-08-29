@@ -1,8 +1,13 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { createClient } from '@supabase/supabase-js';
 import { Volume2, Sparkles, AlertCircle, Play, Loader2, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
 
 const VOICES = [
   { id: 'pNInz6obpgDQGcFmaJgB', name: 'Adam (دەنگێ زەلامی - هێمن و فەرمی)' },
@@ -67,7 +72,6 @@ export default function TTSPage() {
       const url = URL.createObjectURL(blob);
       setAudioUrl(url);
 
-      // کێمکرنا پیتان د شاشێ دا دەستبەجێ
       setCharsLeft((prev) => (prev !== null ? prev - text.trim().length : prev));
     } catch (err) {
       setError(err.message);
@@ -80,7 +84,6 @@ export default function TTSPage() {
     <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-2xl bg-zinc-900/80 border border-zinc-800 backdrop-blur-xl p-6 md:p-8 rounded-3xl shadow-2xl space-y-6">
         
-        {/* سەردێڕ و زانیاریێن باڵانسی */}
         <div className="flex items-center justify-between border-b border-zinc-800 pb-4">
           <div className="flex items-center gap-3">
             <div className="p-3 bg-purple-600/20 text-purple-400 rounded-2xl border border-purple-500/20">
@@ -98,13 +101,12 @@ export default function TTSPage() {
           )}
         </div>
 
-        {/* هەلبژارتنا دەنگی */}
         <div className="space-y-2">
           <label className="text-sm font-medium text-zinc-300">هەلبژارتنا دەنگی:</label>
           <select
             value={selectedVoice}
             onChange={(e) => setSelectedVoice(e.target.value)}
-            className="w-full bg-zinc-850 bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-sm text-zinc-200 outline-none focus:border-purple-500 transition"
+            className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-sm text-zinc-200 outline-none focus:border-purple-500 transition"
           >
             {VOICES.map((v) => (
               <option key={v.id} value={v.id}>{v.name}</option>
@@ -112,7 +114,6 @@ export default function TTSPage() {
           </select>
         </div>
 
-        {/* جهێ نڤیسینا دەقی */}
         <div className="space-y-2">
           <div className="flex justify-between text-xs text-zinc-400">
             <label className="font-medium text-zinc-300">نڤیسینا تە:</label>
@@ -126,7 +127,6 @@ export default function TTSPage() {
           />
         </div>
 
-        {/* خەلەتی */}
         {error && (
           <div className="flex items-center gap-2 p-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-xs">
             <AlertCircle className="w-4 h-4 flex-shrink-0" />
@@ -134,7 +134,6 @@ export default function TTSPage() {
           </div>
         )}
 
-        {/* دوگما دروستکرنێ */}
         <button
           onClick={handleGenerateVoice}
           disabled={loading || !text.trim()}
@@ -153,7 +152,6 @@ export default function TTSPage() {
           )}
         </button>
 
-        {/* پلەیەرێ دەنگی پشتی چێبوونێ */}
         {audioUrl && (
           <div className="p-4 bg-purple-950/30 border border-purple-800/40 rounded-2xl space-y-2 animate-fade-in">
             <p className="text-xs text-purple-300 font-medium">دەنگێ تە ئامادەیە:</p>
@@ -161,7 +159,6 @@ export default function TTSPage() {
           </div>
         )}
 
-        {/* زڤڕین بۆ سەرەکی */}
         <div className="text-center pt-2">
           <Link href="/" className="text-xs text-zinc-500 hover:text-zinc-300 transition inline-flex items-center gap-1">
             <span>زڤڕین بۆ لاپەڕێ سەرەکی</span>

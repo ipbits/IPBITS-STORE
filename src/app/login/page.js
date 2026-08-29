@@ -1,10 +1,10 @@
 'use client';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
-import { Lock, Mail, KeyRound, Sparkles } from 'lucide-react';
+import { Lock, Mail, KeyRound, ArrowRight } from 'lucide-react';
 
-// دروستکرنا گرێدانا Supabase ب ڕاستەوخۆ
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
@@ -31,24 +31,36 @@ export default function LoginPage() {
         setErrorMsg('ئیمەیل یان پاسوۆردێ تە خەلەتە!');
         setLoading(false);
       } else {
-        // دەمێ دروست بیت ئێکسەر دچیتە سەر چاتێ
         router.push('/chat');
       }
     } catch (err) {
-      setErrorMsg('ئاریشەیەک د سێرڤەری دا هەیە!');
+      setErrorMsg('ئاریشەیەک د پەیوەندیا سێرڤەری دا هەیە!');
       setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen bg-[#070913] text-white flex items-center justify-center p-4 selection:bg-purple-600" dir="rtl">
-      <div className="w-full max-w-md bg-slate-900/80 border border-slate-800 p-8 rounded-3xl shadow-2xl backdrop-blur-md">
+      <div className="w-full max-w-md bg-slate-900/80 border border-slate-800 p-6 sm:p-8 rounded-3xl shadow-2xl backdrop-blur-md">
         
+        {/* دوگمەیا زڤڕینێ بۆ سەرەکی */}
+        <div className="mb-6">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-purple-300 transition-colors"
+          >
+            <ArrowRight size={14} />
+            <span>زڤڕین بۆ لاپەڕێ سەرەکی</span>
+          </Link>
+        </div>
+
         {/* لۆگۆ و سەردێڕ */}
         <div className="text-center mb-8">
-          <div className="w-14 h-14 bg-purple-600/20 border border-purple-500/30 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg shadow-purple-900/20">
-            <Sparkles className="text-purple-400" size={26} />
-          </div>
+          <img 
+            src="/logo.png" 
+            alt="IPBITS Logo" 
+            className="w-16 h-16 rounded-2xl object-cover shadow-xl border border-purple-400/30 mx-auto mb-3" 
+          />
           <h2 className="text-2xl font-black bg-gradient-to-r from-purple-400 to-indigo-300 bg-clip-text text-transparent">
             چوونەژوور بۆ IPBITS AI
           </h2>
@@ -97,7 +109,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white font-bold py-3.5 rounded-xl text-xs transition-all flex items-center justify-center gap-2 shadow-lg shadow-purple-600/30 mt-2 cursor-pointer active:scale-98"
+            className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:opacity-95 disabled:opacity-50 text-white font-bold py-3.5 rounded-xl text-xs transition-all flex items-center justify-center gap-2 shadow-lg shadow-purple-600/30 mt-2 cursor-pointer active:scale-98"
           >
             {loading ? 'پشکنین...' : (
               <>

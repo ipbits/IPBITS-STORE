@@ -133,7 +133,7 @@ export default function VoiceHubPage() {
             </div>
             <div>
               <h1 className="text-xl font-bold">دەنگ و زیرەکییا دەستکرد (AI Voice Studio)</h1>
-              <p className="text-xs text-zinc-400">هەموو خزمەتگوزاریێن دەنگی ل ئێک جهـ</p>
+              <p className="text-xs text-zinc-400">هەمى خزمەتگوزاریێن دەنگی ل ئێک جهـ</p>
             </div>
           </div>
           {charsLeft !== null && (

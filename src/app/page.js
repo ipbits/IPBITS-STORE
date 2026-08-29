@@ -158,14 +158,6 @@ const TRANSLATIONS = {
   }
 };
 
-const IPBitsLogo = () => (
-  <img 
-    src="/logo.png" 
-    alt="IPBITS Logo" 
-    className="w-12 h-12 rounded-2xl object-cover shadow-xl border border-purple-400/30 shrink-0" 
-  />
-);
-
 const AI_TIERS_DATA = [
   { id: '1_day', priceIQD: 2500, oldPriceIQD: 5000 },
   { id: '7_days', priceIQD: 5000, oldPriceIQD: 10000 },
@@ -198,6 +190,7 @@ const PAYMENT_ACCOUNTS = {
   PayPal: { title: 'PayPal', number: 'https://www.paypal.com/ncp/payment/VDDES8YRYJG46', note: 'Send via Friends & Family' },
   USDT: { title: 'USDT (TRC20)', number: 'TUeqkjzFdD7b1EtnAJL9tbzB1uN8wDbU6T', note: 'TRC20 Network Only' }
 };
+
 export default function StorePage() {
   const [lang, setLang] = useState('ku');
   const t = TRANSLATIONS[lang];
@@ -347,47 +340,52 @@ export default function StorePage() {
   };
 
   const isCurrentTierInCart = cart.some(i => i.id === `ai_bundle_${selectedTierId}`);
+
   return (
     <div className="min-h-screen bg-[#070913] text-slate-100 font-sans selection:bg-purple-600 selection:text-white flex flex-col justify-between" dir={t.dir}>
       
-      {/* Header */}
-      <nav className="border-b border-slate-800/60 bg-[#0c1022]/80 backdrop-blur-xl sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-3.5">
-            <IPBitsLogo />
-            <div>
-              <h1 className="text-2xl font-black tracking-wider bg-gradient-to-r from-purple-400 via-fuchsia-300 to-indigo-300 bg-clip-text text-transparent">
-                IPBITS STORE
-              </h1>
-              <p className="text-[11px] text-slate-400 font-medium">{t.storeSubtitle}</p>
-            </div>
+      {/* هێدەرێ ستاندارد یێ مۆبایل و دێسکتۆپێ */}
+      <nav className="w-full border-b border-slate-800 bg-[#0c1022]/95 backdrop-blur-xl sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto px-3 sm:px-6 h-16 flex items-center justify-between gap-2">
+          
+          {/* لۆگۆ و ناڤ */}
+          <div className="flex items-center gap-2 shrink-0">
+            <img 
+              src="/logo.png" 
+              alt="IPBITS Logo" 
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl object-cover border border-purple-500/40 shrink-0 block" 
+            />
+            <span className="text-sm sm:text-lg font-black tracking-wide bg-gradient-to-r from-purple-400 to-indigo-300 bg-clip-text text-transparent">
+              IPBITS STORE
+            </span>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="flex items-center bg-slate-900/90 border border-slate-800 rounded-2xl p-1 shadow-inner">
+          {/* زمان و سەبەتە */}
+          <div className="flex items-center gap-1.5 shrink-0">
+            <div className="flex items-center bg-slate-900 border border-slate-800 rounded-lg p-0.5 text-xs font-bold">
               <button
                 type="button"
                 onClick={() => setLang('ku')}
-                className={`px-2.5 py-1 text-xs font-bold rounded-xl transition-all ${
-                  lang === 'ku' ? 'bg-purple-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
+                className={`px-2 py-1 rounded transition-all ${
+                  lang === 'ku' ? 'bg-purple-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
                 }`}
               >
-                کوردى
+                کو
               </button>
               <button
                 type="button"
                 onClick={() => setLang('ar')}
-                className={`px-2.5 py-1 text-xs font-bold rounded-xl transition-all ${
-                  lang === 'ar' ? 'bg-purple-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
+                className={`px-2 py-1 rounded transition-all ${
+                  lang === 'ar' ? 'bg-purple-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
                 }`}
               >
-                عربي
+                عر
               </button>
               <button
                 type="button"
                 onClick={() => setLang('en')}
-                className={`px-2.5 py-1 text-xs font-bold rounded-xl transition-all ${
-                  lang === 'en' ? 'bg-purple-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
+                className={`px-2 py-1 rounded transition-all ${
+                  lang === 'en' ? 'bg-purple-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
                 }`}
               >
                 EN
@@ -397,55 +395,69 @@ export default function StorePage() {
             <button 
               type="button"
               onClick={scrollToCart}
-              className="flex items-center gap-2 bg-slate-900/90 hover:bg-purple-950/50 border border-purple-500/20 hover:border-purple-500/50 px-3.5 py-2 rounded-2xl text-purple-300 font-bold text-sm shadow-inner transition-all cursor-pointer active:scale-95"
+              className="flex items-center gap-1 bg-purple-600/20 border border-purple-500/40 text-purple-300 px-2.5 py-1.5 rounded-lg text-xs font-bold shrink-0 cursor-pointer"
             >
-              <ShoppingBag className="text-purple-400" size={18} />
+              <ShoppingBag size={14} className="text-purple-400" />
               <span>{cart.length}</span>
             </button>
           </div>
+
         </div>
       </nav>
 
-      {/* Main Section */}
-      <main className="max-w-6xl mx-auto px-6 mt-12 mb-16 flex-1">
-        <div ref={productsSectionRef} className="text-center max-w-3xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-950/80 via-fuchsia-950/80 to-indigo-950/80 text-purple-300 px-5 py-2 rounded-full text-xs font-black mb-5 border border-purple-500/40 shadow-xl shadow-purple-900/30 animate-pulse">
-            <Sparkles className="text-amber-400" size={15} />
+      {/* ناڤەرۆکا سەرەکی */}
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 mt-6 sm:mt-10 mb-16 flex-1">
+        
+        {/* سەردێڕ */}
+        <div ref={productsSectionRef} className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-950/80 via-fuchsia-950/80 to-indigo-950/80 text-purple-300 px-4 py-1.5 sm:px-5 sm:py-2 rounded-full text-[11px] sm:text-xs font-black mb-4 border border-purple-500/40 shadow-xl shadow-purple-900/30 animate-pulse">
+            <Sparkles className="text-amber-400" size={14} />
             <span>{t.heroBadge}</span>
           </div>
           
-          <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-white mb-4 leading-tight">
+          <h2 className="text-2xl sm:text-5xl font-black tracking-tight text-white mb-3 leading-tight">
             {t.heroTitle1} <br className="hidden sm:inline"/> 
             <span className="bg-gradient-to-r from-purple-400 via-fuchsia-400 to-indigo-400 bg-clip-text text-transparent">
               {t.heroTitle2}
             </span>
           </h2>
           
-          <p className="text-slate-400 text-sm sm:text-base leading-relaxed max-w-xl mx-auto font-normal">
+          <p className="text-slate-400 text-xs sm:text-base leading-relaxed max-w-xl mx-auto font-normal">
             {t.heroDesc}
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 items-start">
+          
+          {/* بەشێ ئۆفەرا سەرەکی */}
           <div className="lg:col-span-2 space-y-6">
-            <div className="p-6 sm:p-8 rounded-3xl border border-purple-500/60 bg-gradient-to-br from-purple-950/60 via-slate-900/95 to-indigo-950/60 shadow-2xl shadow-purple-950/40 ring-1 ring-purple-500/40 relative overflow-hidden">
+            
+            <div className="p-5 sm:p-8 rounded-3xl border border-purple-500/60 bg-gradient-to-br from-purple-950/60 via-slate-900/95 to-indigo-950/60 shadow-2xl shadow-purple-950/40 ring-1 ring-purple-500/40 relative overflow-hidden">
               
               <div className="flex items-center justify-between gap-2 mb-4">
-                <span className="text-xs font-bold px-3.5 py-1.5 rounded-full border bg-amber-500/20 text-amber-300 border-amber-500/40 flex items-center gap-1.5 shadow-sm">
-                  <Flame className="text-amber-400" size={14} />
+                <span className="text-[11px] sm:text-xs font-bold px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full border bg-amber-500/20 text-amber-300 border-amber-500/40 flex items-center gap-1.5 shadow-sm">
+                  <Flame className="text-amber-400" size={13} />
                   {t.mainOfferBadge}
                 </span>
                 <span className="text-xs text-purple-300 font-bold flex items-center gap-1">
-                  <Clock size={14} /> {t.officialBadge}
+                  <Clock size={13} /> {t.officialBadge}
                 </span>
               </div>
 
-              <h3 className="font-black text-2xl sm:text-3xl text-white mb-2">{t.mainOfferTitle}</h3>
-              <p className="text-xs sm:text-sm text-slate-300 mb-6 leading-relaxed">{t.mainOfferDesc}</p>
+              <h3 className="font-black text-xl sm:text-3xl text-white mb-2">
+                {t.mainOfferTitle}
+              </h3>
 
+              <p className="text-xs sm:text-sm text-slate-300 mb-6 leading-relaxed">
+                {t.mainOfferDesc}
+              </p>
+
+              {/* هەلبژارتنا دەمێ پاکێجێ */}
               <div className="mb-6">
-                <label className="block text-xs font-bold text-purple-300 mb-3">{t.selectDuration}</label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                <label className="block text-xs font-bold text-purple-300 mb-2.5">
+                  {t.selectDuration}
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {AI_TIERS_DATA.map((tierData) => {
                     const isSelected = selectedTierId === tierData.id;
                     const tierLang = t.tiers[tierData.id];
@@ -454,21 +466,25 @@ export default function StorePage() {
                         key={tierData.id}
                         type="button"
                         onClick={() => setSelectedTierId(tierData.id)}
-                        className={`p-3 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
+                        className={`p-2.5 sm:p-3 rounded-xl sm:rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
                           t.dir === 'rtl' ? 'text-right' : 'text-left'
                         } ${
                           isSelected
-                            ? 'bg-purple-600/30 border-purple-400 text-white shadow-lg shadow-purple-900/40 ring-2 ring-purple-500'
+                            ? 'bg-purple-600/30 border-purple-400 text-white shadow-md shadow-purple-900/40 ring-2 ring-purple-500'
                             : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
                         }`}
                       >
-                        <div className="flex justify-between items-center mb-1.5">
+                        <div className="flex justify-between items-center mb-1">
                           <span className="font-black text-xs">{tierLang.name}</span>
-                          {isSelected && <Check className="text-purple-400" size={14} />}
+                          {isSelected && <Check className="text-purple-400" size={13} />}
                         </div>
                         <div>
-                          <span className="text-sm font-black text-white block">{tierData.priceIQD.toLocaleString()} IQD</span>
-                          <span className="text-[10px] text-slate-400 line-through">{tierData.oldPriceIQD.toLocaleString()} IQD</span>
+                          <span className="text-xs sm:text-sm font-black text-white block">
+                            {tierData.priceIQD.toLocaleString()} IQD
+                          </span>
+                          <span className="text-[10px] text-slate-400 line-through">
+                            {tierData.oldPriceIQD.toLocaleString()} IQD
+                          </span>
                         </div>
                       </button>
                     );
@@ -476,11 +492,12 @@ export default function StorePage() {
                 </div>
               </div>
 
-              <div className="flex items-baseline justify-between p-4 bg-slate-950/70 rounded-2xl border border-purple-500/20 mb-6">
+              {/* بهایێ گشتی */}
+              <div className="flex items-baseline justify-between p-3.5 sm:p-4 bg-slate-950/70 rounded-xl sm:rounded-2xl border border-purple-500/20 mb-6">
                 <div>
                   <span className="text-xs text-slate-400 block">{t.selectedPriceFor} ({currentTierText.duration}):</span>
                   <div className="flex items-baseline gap-2 mt-0.5">
-                    <span className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-indigo-200">
+                    <span className="text-2xl sm:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-indigo-200">
                       {currentTierData.priceIQD.toLocaleString()} IQD
                     </span>
                     <span className="text-xs text-slate-500 line-through">
@@ -488,7 +505,7 @@ export default function StorePage() {
                     </span>
                   </div>
                 </div>
-                <span className="text-xs font-bold text-amber-300 bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-xl">
+                <span className="text-[11px] sm:text-xs font-bold text-amber-300 bg-amber-500/10 border border-amber-500/30 px-2.5 py-1 rounded-lg sm:rounded-xl">
                   {currentTierText.badge}
                 </span>
               </div>
@@ -496,103 +513,150 @@ export default function StorePage() {
               <button
                 type="button"
                 onClick={addAIToCart}
-                className="w-full py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all cursor-pointer bg-gradient-to-r from-purple-600 via-fuchsia-600 to-indigo-600 hover:opacity-95 text-white shadow-xl shadow-purple-600/40 active:scale-98"
+                className="w-full py-3.5 sm:py-4 rounded-xl sm:rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer bg-gradient-to-r from-purple-600 via-fuchsia-600 to-indigo-600 hover:opacity-95 text-white shadow-xl shadow-purple-600/40 active:scale-98"
               >
                 {isCurrentTierInCart ? (
                   <>
-                    <CheckCircle2 className="text-emerald-300" size={18} />
+                    <CheckCircle2 className="text-emerald-300" size={16} />
                     <span>{t.inCartBtn}</span>
                   </>
                 ) : (
                   <>
-                    <Zap className="text-amber-300 fill-amber-300" size={18} />
+                    <Zap className="text-amber-300 fill-amber-300" size={16} />
                     <span>{t.addToCartBtn} {currentTierText.name} - {currentTierData.priceIQD.toLocaleString()} IQD</span>
                   </>
                 )}
               </button>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* بەرهەمێن قوفڵکری */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               {LOCKED_PRODUCTS.map((product) => (
-                <div key={product.id} className="p-5 rounded-3xl border bg-slate-900/30 border-slate-800/50 opacity-60 flex flex-col justify-between">
+                <div 
+                  key={product.id}
+                  className="p-4 sm:p-5 rounded-2xl sm:rounded-3xl border bg-slate-900/30 border-slate-800/50 opacity-60 flex flex-col justify-between"
+                >
                   <div>
-                    <div className="flex items-center justify-between gap-2 mb-3">
-                      <span className="text-[11px] font-bold px-3 py-1 rounded-full border text-slate-400 bg-slate-800/60 border-slate-700/60 flex items-center gap-1">
-                        <Lock size={12} /> {t.comingSoonBadge}
+                    <div className="flex items-center justify-between gap-2 mb-2.5">
+                      <span className="text-[10px] sm:text-[11px] font-bold px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full border text-slate-400 bg-slate-800/60 border-slate-700/60 flex items-center gap-1">
+                        <Lock size={11} /> {t.comingSoonBadge}
                       </span>
-                      <span className="text-xs text-slate-400">{product.category}</span>
+                      <span className="text-[11px] text-slate-400">{product.category}</span>
                     </div>
-                    <h3 className="font-bold text-white text-base mb-2">{product.name}</h3>
-                    <span className="text-xl font-bold text-slate-500 block mb-4">{product.priceIQD.toLocaleString()} IQD</span>
+                    <h3 className="font-bold text-white text-sm sm:text-base mb-1">{product.name}</h3>
+                    <span className="text-base sm:text-lg font-bold text-slate-500 block mb-3">{product.priceIQD.toLocaleString()} IQD</span>
                   </div>
-                  <button disabled className="w-full py-2.5 rounded-xl font-bold text-xs bg-slate-800/40 border border-slate-800 text-slate-500 flex items-center justify-center gap-2 cursor-not-allowed">
-                    <Lock size={13} /> {t.comingSoonBtn}
+
+                  <button
+                    disabled
+                    className="w-full py-2 rounded-lg sm:rounded-xl font-bold text-xs bg-slate-800/40 border border-slate-800 text-slate-500 flex items-center justify-center gap-1.5 cursor-not-allowed"
+                  >
+                    <Lock size={12} /> {t.comingSoonBtn}
                   </button>
                 </div>
               ))}
             </div>
+
           </div>
-          <div ref={cartSectionRef} className="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 shadow-2xl backdrop-blur-md sticky top-28 scroll-mt-28">
-            <div className="flex items-center justify-between border-b border-slate-800/80 pb-4 mb-5">
-              <h3 className="font-extrabold text-lg flex items-center gap-2 text-white">
-                <ShoppingBag className="text-purple-400" size={20} /> {t.cartTitle}
+
+          {/* بەشێ سەبەتێ و فۆرمێ داخوازیێ */}
+          <div ref={cartSectionRef} className="bg-slate-900/80 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-2xl backdrop-blur-md sticky top-28 scroll-mt-28">
+            <div className="flex items-center justify-between border-b border-slate-800/80 pb-3 sm:pb-4 mb-4 sm:mb-5">
+              <h3 className="font-extrabold text-base sm:text-lg flex items-center gap-2 text-white">
+                <ShoppingBag className="text-purple-400" size={18} /> {t.cartTitle}
               </h3>
-              <span className="text-xs bg-slate-800/90 text-purple-300 border border-purple-500/20 px-2.5 py-1 rounded-full font-bold">
+              <span className="text-xs bg-slate-800/90 text-purple-300 border border-purple-500/20 px-2 py-0.5 rounded-full font-bold">
                 {cart.length} {t.subscriptions}
               </span>
             </div>
 
             {success ? (
               <div className="text-center py-6">
-                <CheckCircle2 className="w-16 h-16 text-emerald-400 mx-auto mb-3 animate-bounce" />
-                <h4 className="text-xl font-bold mb-1 text-white">{t.successTitle}</h4>
-                <p className="text-slate-400 text-xs leading-relaxed mb-6">{t.successDesc}</p>
-                <button type="button" onClick={sendToWhatsApp} className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-2xl flex items-center justify-center gap-2 text-xs shadow-lg shadow-emerald-600/30 mb-3 transition-all cursor-pointer">
-                  <MessageCircle size={16} /> <span>{t.whatsappBtn}</span>
+                <CheckCircle2 className="w-14 h-14 text-emerald-400 mx-auto mb-3 animate-bounce" />
+                <h4 className="text-lg font-bold mb-1 text-white">{t.successTitle}</h4>
+                <p className="text-slate-400 text-xs leading-relaxed mb-5">
+                  {t.successDesc}
+                </p>
+
+                <button
+                  type="button"
+                  onClick={sendToWhatsApp}
+                  className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 text-xs shadow-lg shadow-emerald-600/30 mb-2.5 transition-all cursor-pointer"
+                >
+                  <MessageCircle size={15} />
+                  <span>{t.whatsappBtn}</span>
                 </button>
-                <button type="button" onClick={handleResetForNewOrder} className="w-full bg-slate-800 hover:bg-slate-700 text-purple-300 border border-purple-500/30 font-bold py-3 rounded-2xl flex items-center justify-center gap-2 text-xs transition-all cursor-pointer shadow-md">
-                  <RefreshCw className="text-purple-400" size={14} /> <span>{t.newOrderBtn}</span>
+
+                <button
+                  type="button"
+                  onClick={handleResetForNewOrder}
+                  className="w-full bg-slate-800 hover:bg-slate-700 text-purple-300 border border-purple-500/30 font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 text-xs transition-all cursor-pointer shadow-md"
+                >
+                  <RefreshCw className="text-purple-400" size={13} />
+                  <span>{t.newOrderBtn}</span>
                 </button>
               </div>
             ) : (
               <div>
                 {cart.length === 0 ? (
-                  <p className="text-slate-500 text-xs text-center py-7 border border-dashed border-slate-800 rounded-2xl mb-5 font-medium">{t.cartEmpty}</p>
+                  <p className="text-slate-500 text-xs text-center py-6 border border-dashed border-slate-800 rounded-xl mb-4 font-medium">
+                    {t.cartEmpty}
+                  </p>
                 ) : (
-                  <div className="space-y-2 mb-5 max-h-40 overflow-y-auto pr-1">
+                  <div className="space-y-2 mb-4 max-h-40 overflow-y-auto pr-1">
                     {cart.map((item) => (
-                      <div key={item.id} className="flex justify-between items-center bg-slate-950/70 p-3 rounded-xl border border-purple-500/30 text-xs">
-                        <span className="font-bold text-slate-200">{item.name}</span>
+                      <div key={item.id} className="flex justify-between items-center bg-slate-950/70 p-2.5 rounded-xl border border-purple-500/30 text-xs">
+                        <span className="font-bold text-slate-200 truncate max-w-[150px]">{item.name}</span>
                         <div className="flex items-center gap-2">
                           <span className="text-purple-400 font-bold">{item.priceIQD.toLocaleString()} IQD</span>
-                          <button onClick={() => removeFromCart(item.id)} className="text-slate-500 hover:text-rose-400 transition-colors"><Trash2 size={14} /></button>
+                          <button onClick={() => removeFromCart(item.id)} className="text-slate-500 hover:text-rose-400 transition-colors">
+                            <Trash2 size={13} />
+                          </button>
                         </div>
                       </div>
                     ))}
                   </div>
                 )}
 
-                <div className="bg-slate-950/90 p-4 rounded-2xl border border-slate-800/80 mb-5">
-                  <div className="flex justify-between text-base font-extrabold text-white">
+                <div className="bg-slate-950/90 p-3.5 rounded-xl sm:rounded-2xl border border-slate-800/80 mb-4">
+                  <div className="flex justify-between text-sm sm:text-base font-extrabold text-white">
                     <span>{t.totalPrice}</span>
                     <span className="text-purple-400 font-black">{totalIQD.toLocaleString()} IQD</span>
                   </div>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-3.5">
+                <form onSubmit={handleSubmit} className="space-y-3">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{t.labelName}</label>
-                    <input required type="text" placeholder={t.placeholderName} className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-purple-500 text-white" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
+                    <label className="block text-[11px] sm:text-xs font-semibold text-slate-300 mb-1">{t.labelName}</label>
+                    <input
+                      required
+                      type="text"
+                      placeholder={t.placeholderName}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-purple-500 text-white"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{t.labelPhone}</label>
-                    <input required type="tel" placeholder="0750XXXXXXX" className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-purple-500 text-white" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} />
+                    <label className="block text-[11px] sm:text-xs font-semibold text-slate-300 mb-1">{t.labelPhone}</label>
+                    <input
+                      required
+                      type="tel"
+                      placeholder="0750XXXXXXX"
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-purple-500 text-white"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{t.labelPayment}</label>
-                    <select className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-purple-500 text-white" value={formData.paymentMethod} onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value })}>
+                    <label className="block text-[11px] sm:text-xs font-semibold text-slate-300 mb-1">{t.labelPayment}</label>
+                    <select
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-purple-500 text-white"
+                      value={formData.paymentMethod}
+                      onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value })}
+                    >
                       <option value="FIB">First Iraqi Bank (FIB)</option>
                       <option value="FastPay">FastPay Wallet</option>
                       <option value="ZainCash">Zain Cash</option>
@@ -601,63 +665,100 @@ export default function StorePage() {
                     </select>
 
                     <div className="mt-2 bg-purple-950/40 border border-purple-800/40 rounded-xl p-2.5 flex items-center justify-between text-xs">
-                      <div className="truncate max-w-[200px]">
+                      <div className="truncate max-w-[180px]">
                         <span className="text-[10px] text-purple-300 block">{PAYMENT_ACCOUNTS[formData.paymentMethod]?.note}</span>
                         <span className="font-bold text-white tracking-wider text-[11px] truncate block">{PAYMENT_ACCOUNTS[formData.paymentMethod]?.number}</span>
                       </div>
-                      <button type="button" onClick={copyPaymentNumber} className="bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 px-2.5 py-1 rounded-lg text-[11px] font-semibold flex items-center gap-1 transition-all shrink-0">
-                        {copied ? <Check className="text-emerald-400" size={12} /> : <Copy size={12} />}
+                      <button
+                        type="button"
+                        onClick={copyPaymentNumber}
+                        className="bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 px-2 py-1 rounded-lg text-[10px] sm:text-[11px] font-semibold flex items-center gap-1 transition-all shrink-0"
+                      >
+                        {copied ? <Check className="text-emerald-400" size={11} /> : <Copy size={11} />}
                         <span>{copied ? t.copiedBtn : t.copyBtn}</span>
                       </button>
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{t.labelTxId}</label>
-                    <input required type="text" placeholder={t.placeholderTxId} className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-purple-500 text-white" value={formData.transactionId} onChange={(e) => setFormData({ ...formData, transactionId: e.target.value })} />
+                    <label className="block text-[11px] sm:text-xs font-semibold text-slate-300 mb-1">{t.labelTxId}</label>
+                    <input
+                      required
+                      type="text"
+                      placeholder={t.placeholderTxId}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-purple-500 text-white"
+                      value={formData.transactionId}
+                      onChange={(e) => setFormData({ ...formData, transactionId: e.target.value })}
+                    />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{t.labelUpload}</label>
-                    <label className="border border-dashed border-slate-700 hover:border-purple-500/60 bg-slate-950/60 rounded-xl p-3 flex items-center justify-between cursor-pointer transition-colors text-xs text-slate-400">
+                    <label className="block text-[11px] sm:text-xs font-semibold text-slate-300 mb-1">{t.labelUpload}</label>
+                    <label className="border border-dashed border-slate-700 hover:border-purple-500/60 bg-slate-950/60 rounded-xl p-2.5 flex items-center justify-between cursor-pointer transition-colors text-xs text-slate-400">
                       <div className="flex items-center gap-2 truncate">
-                        <UploadCloud className="text-purple-400" size={16} />
-                        <span className="truncate">{fileName || t.uploadPlaceholder}</span>
+                        <UploadCloud className="text-purple-400 shrink-0" size={15} />
+                        <span className="truncate text-[11px]">{fileName || t.uploadPlaceholder}</span>
                       </div>
-                      {fileName && <button type="button" onClick={clearFile} className="text-slate-400 hover:text-rose-400 p-1"><X size={14} /></button>}
-                      <input type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+                      {fileName && (
+                        <button type="button" onClick={clearFile} className="text-slate-400 hover:text-rose-400 p-0.5">
+                          <X size={13} />
+                        </button>
+                      )}
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        className="hidden" 
+                        onChange={handleFileChange} 
+                      />
                     </label>
                   </div>
 
-                  <button type="submit" disabled={loading || cart.length === 0} className="w-full bg-gradient-to-r from-purple-600 via-fuchsia-600 to-indigo-600 hover:opacity-95 disabled:opacity-40 disabled:cursor-not-allowed transition-all font-black py-4 rounded-2xl flex items-center justify-center gap-2 text-xs shadow-xl shadow-purple-600/30 mt-2 text-white cursor-pointer">
-                    {loading ? t.submittingBtn : (<><span>{t.submitBtn}</span><Send size={14} /></>)}
+                  <button
+                    type="submit"
+                    disabled={loading || cart.length === 0}
+                    className="w-full bg-gradient-to-r from-purple-600 via-fuchsia-600 to-indigo-600 hover:opacity-95 disabled:opacity-40 disabled:cursor-not-allowed transition-all font-black py-3.5 rounded-xl flex items-center justify-center gap-2 text-xs shadow-xl shadow-purple-600/30 mt-2 text-white cursor-pointer"
+                  >
+                    {loading ? t.submittingBtn : (
+                      <>
+                        <span>{t.submitBtn}</span>
+                        <Send size={13} />
+                      </>
+                    )}
                   </button>
 
-                  <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-500 pt-1 font-medium">
-                    <ShieldCheck className="text-purple-400" size={13} /> {t.guaranteeText}
+                  <div className="flex items-center justify-center gap-1 text-[10px] sm:text-[11px] text-slate-500 pt-0.5 font-medium">
+                    <ShieldCheck className="text-purple-400" size={12} /> {t.guaranteeText}
                   </div>
                 </form>
               </div>
             )}
           </div>
+
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="w-full border-t border-slate-800/80 bg-[#0c1022]/90 backdrop-blur-md py-8 px-6">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
-          <div className="flex items-center gap-2">
-            <span>© {new Date().getFullYear()} IPBITS STORE. {t.allRightsReserved}</span>
+      {/* فۆتەر */}
+      <footer className="w-full border-t border-slate-800/80 bg-[#0c1022]/90 backdrop-blur-md py-6 px-4 sm:px-6">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400">
+          
+          <div className="flex items-center gap-2 text-[11px] sm:text-xs">
+            <span>© 2026 IPBITS STORE. {t.allRightsReserved}</span>
           </div>
 
           <div className="flex items-center gap-4">
-            <a href="https://instagram.com/ipbits" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 bg-slate-900/80 hover:bg-purple-950/60 border border-purple-500/30 text-purple-300 px-3.5 py-1.5 rounded-xl font-bold transition-all shadow-sm hover:scale-105">
-              <svg className="w-4 h-4 text-fuchsia-400 fill-current" viewBox="0 0 24 24">
+            <a 
+              href="https://instagram.com/ipbits" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 bg-slate-900/80 hover:bg-purple-950/60 border border-purple-500/30 text-purple-300 px-3 py-1 rounded-lg text-xs font-bold transition-all shadow-sm"
+            >
+              <svg className="w-3.5 h-3.5 text-fuchsia-400 fill-current" viewBox="0 0 24 24">
                 <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
               </svg>
               <span>@ipbits</span>
             </a>
           </div>
+
         </div>
       </footer>
 

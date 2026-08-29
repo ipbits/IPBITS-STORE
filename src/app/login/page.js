@@ -345,70 +345,64 @@ export default function StorePage() {
     <div className="min-h-screen bg-[#070913] text-slate-100 font-sans selection:bg-purple-600 selection:text-white flex flex-col justify-between" dir={t.dir}>
       
       {/* هێدەرێ سەرەکی - هەردەم لۆگۆ ل لایێ راستێ یە و دوگمەیێن زمانی ناچنە سەری */}
-      <header className="w-full border-b border-slate-800/80 bg-[#0c1022]/95 backdrop-blur-xl sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-3 sm:px-6 py-2.5 flex flex-col gap-2">
-          
-          {/* ڕێزا سەرێ: لۆگۆ + سەبەتە */}
-          <div className="flex items-center justify-between w-full">
-            <div className="flex items-center gap-2.5 shrink-0">
+            {/* Header ب دیزاینەکا جیاواز کو قەت تێکناچیت */}
+      <header className="w-full border-b border-slate-800 bg-[#0c1022] sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            {/* لۆگۆ */}
+            <div className="flex items-center gap-3">
               <img 
                 src="/logo.png" 
                 alt="IPBITS Logo" 
-                className="w-10 h-10 rounded-xl object-cover shadow-lg border border-purple-400/30 shrink-0 block" 
+                className="w-10 h-10 rounded-xl object-cover border border-purple-500/40 shrink-0" 
               />
-              <div className="flex flex-col">
-                <span className="text-base sm:text-xl font-black tracking-wide bg-gradient-to-r from-purple-400 via-fuchsia-300 to-indigo-300 bg-clip-text text-transparent leading-tight">
-                  IPBITS STORE
-                </span>
-                <span className="text-[10px] sm:text-xs text-slate-400 font-medium hidden sm:block">
-                  {t.storeSubtitle}
-                </span>
+              <span className="text-lg font-black tracking-wider bg-gradient-to-r from-purple-400 to-indigo-300 bg-clip-text text-transparent">
+                IPBITS STORE
+              </span>
+            </div>
+
+            {/* سەبەتە و زمان */}
+            <div className="flex items-center gap-2">
+              <div className="flex items-center bg-slate-900 border border-slate-800 rounded-lg p-0.5 text-xs">
+                <button
+                  type="button"
+                  onClick={() => setLang('ku')}
+                  className={`px-2 py-1 rounded font-bold transition-all ${
+                    lang === 'ku' ? 'bg-purple-600 text-white' : 'text-slate-400'
+                  }`}
+                >
+                  کو
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLang('ar')}
+                  className={`px-2 py-1 rounded font-bold transition-all ${
+                    lang === 'ar' ? 'bg-purple-600 text-white' : 'text-slate-400'
+                  }`}
+                >
+                  عر
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLang('en')}
+                  className={`px-2 py-1 rounded font-bold transition-all ${
+                    lang === 'en' ? 'bg-purple-600 text-white' : 'text-slate-400'
+                  }`}
+                >
+                  EN
+                </button>
               </div>
-            </div>
 
-            <button 
-              type="button"
-              onClick={scrollToCart}
-              className="flex items-center gap-1.5 bg-slate-900 border border-purple-500/30 hover:border-purple-500 px-3 py-1.5 rounded-xl text-purple-300 font-bold text-xs shadow-inner cursor-pointer"
-            >
-              <ShoppingBag size={15} className="text-purple-400" />
-              <span>{cart.length}</span>
-            </button>
-          </div>
-
-          {/* ڕێزا ژێرێ: دوگمەیێن زمانی */}
-          <div className="w-full flex items-center justify-center pt-1 border-t border-slate-800/50">
-            <div className="flex items-center w-full max-w-xs bg-slate-900 border border-slate-800 rounded-xl p-0.5 shadow-inner">
-              <button
+              <button 
                 type="button"
-                onClick={() => setLang('ku')}
-                className={`flex-1 py-1 text-xs font-bold rounded-lg transition-all ${
-                  lang === 'ku' ? 'bg-purple-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
-                }`}
+                onClick={scrollToCart}
+                className="flex items-center gap-1.5 bg-purple-600/20 border border-purple-500/40 text-purple-300 px-3 py-1.5 rounded-lg text-xs font-bold"
               >
-                کوردی
-              </button>
-              <button
-                type="button"
-                onClick={() => setLang('ar')}
-                className={`flex-1 py-1 text-xs font-bold rounded-lg transition-all ${
-                  lang === 'ar' ? 'bg-purple-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                عربي
-              </button>
-              <button
-                type="button"
-                onClick={() => setLang('en')}
-                className={`flex-1 py-1 text-xs font-bold rounded-lg transition-all ${
-                  lang === 'en' ? 'bg-purple-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                EN
+                <ShoppingBag size={14} />
+                <span>{cart.length}</span>
               </button>
             </div>
           </div>
-
         </div>
       </header>
 

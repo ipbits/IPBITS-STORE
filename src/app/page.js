@@ -663,6 +663,7 @@ export default function StorePage() {
                       <option value="ZainCash">Zain Cash</option>
                       <option value="PayPal">PayPal</option>
                       <option value="USDT">USDT (TRC20 Crypto)</option>
+                      <option value="QiCard">Qi Card</option>
                     </select>
 
                     <div className="mt-2 bg-purple-950/40 border border-purple-800/40 rounded-xl p-2.5 flex items-center justify-between text-xs">

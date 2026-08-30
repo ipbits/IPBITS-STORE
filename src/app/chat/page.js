@@ -1,6 +1,9 @@
 'use client';
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, Sparkles, Loader2, Image as ImageIcon, X, Paperclip, Globe } from 'lucide-react';
+import { 
+  Send, Bot, User, Sparkles, Loader2, Image as ImageIcon, 
+  X, Paperclip, Globe, Check, Copy, Download, Code2 
+} from 'lucide-react';
 
 // مۆدێلێن بنەڕەتی
 const DEFAULT_MODELS = [
@@ -59,6 +62,110 @@ const TRANSLATIONS = {
   }
 };
 
+// کۆمپۆنێنتێ نیشاندانا کۆدی دگەل دوگمەیێن کۆپیکرن و داونلۆدکرنا فایلی
+function CodeBlock({ code, language }) {
+  const [copied, setCopied] = useState(false);
+
+  const cleanLang = (language || 'code').trim().toLowerCase();
+  
+  const getExtension = (lang) => {
+    switch (lang) {
+      case 'html': return 'html';
+      case 'js':
+      case 'javascript': return 'js';
+      case 'jsx': return 'jsx';
+      case 'ts':
+      case 'typescript': return 'ts';
+      case 'tsx': return 'tsx';
+      case 'css': return 'css';
+      case 'python':
+      case 'py': return 'py';
+      case 'sql': return 'sql';
+      case 'json': return 'json';
+      case 'php': return 'php';
+      case 'cpp':
+      case 'c++': return 'cpp';
+      case 'c': return 'c';
+      case 'java': return 'java';
+      case 'sh':
+      case 'bash': return 'sh';
+      default: return 'txt';
+    }
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(code);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleDownload = () => {
+    const ext = getExtension(cleanLang);
+    const blob = new Blob([code], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `code-${Date.now()}.${ext}`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  return (
+    <div className="my-3 rounded-2xl overflow-hidden border border-slate-700/80 bg-slate-950 font-mono text-xs shadow-xl text-left" dir="ltr">
+      <div className="flex items-center justify-between px-4 py-2 bg-slate-900/90 border-b border-slate-800 text-slate-400">
+        <div className="flex items-center gap-2">
+          <Code2 className="text-purple-400" size={14} />
+          <span className="uppercase text-[11px] font-bold text-purple-300">{cleanLang}</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <button
+            type="button"
+            onClick={handleCopy}
+            className="flex items-center gap-1 px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition active:scale-95"
+            title="Copy Code"
+          >
+            {copied ? <Check className="text-emerald-400" size={13} /> : <Copy size={13} />}
+            <span className="text-[10px]">{copied ? 'Copied' : 'Copy'}</span>
+          </button>
+          <button
+            type="button"
+            onClick={handleDownload}
+            className="flex items-center gap-1 px-2.5 py-1 bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 border border-purple-500/30 rounded-lg transition active:scale-95"
+            title="Download as File"
+          >
+            <Download size={13} />
+            <span className="text-[10px]">.{getExtension(cleanLang)}</span>
+          </button>
+        </div>
+      </div>
+      <pre className="p-4 overflow-x-auto text-slate-200 leading-relaxed font-mono">
+        <code>{code}</code>
+      </pre>
+    </div>
+  );
+}
+
+// فەنکشنا جوداکرنا دەقی و کۆدان د ناڤ پەیامێ دا
+function renderMessageContent(content) {
+  if (typeof content !== 'string') return content;
+
+  const parts = content.split(/(```[\s\S]*?```)/g);
+
+  return parts.map((part, index) => {
+    if (part.startsWith('```') && part.endsWith('```')) {
+      const match = part.match(/```(\w+)?\n?([\s\S]*?)```/);
+      const language = match ? match[1] || 'code' : 'code';
+      const code = match ? match[2].trim() : part.slice(3, -3).trim();
+      return <CodeBlock key={index} code={code} language={language} />;
+    }
+    return (
+      <span key={index} className="whitespace-pre-wrap leading-relaxed">
+        {part}
+      </span>
+    );
+  });
+}
+
 export default function ChatPage() {
   const [lang, setLang] = useState('ku'); // 'ku' | 'ar' | 'en'
   const t = TRANSLATIONS[lang];
@@ -78,7 +185,6 @@ export default function ChatPage() {
   const fileInputRef = useRef(null);
   const codeFileInputRef = useRef(null);
 
-  // گۆڕینا پەیاما دەستپێکێ دەمێ زمان دهێتە گۆڕین ئەگەر تەنێ پەیاما ئێکێ بیت
   const handleLangChange = (newLang) => {
     setLang(newLang);
     if (messages.length === 1 && messages[0].role === 'assistant') {
@@ -210,7 +316,6 @@ export default function ChatPage() {
       dir={isRtl ? 'rtl' : 'ltr'} 
       className="min-h-screen w-full max-w-full overflow-x-hidden bg-[#070913] text-white flex flex-col justify-between font-sans selection:bg-purple-600"
     >
-      
       {/* هێدەرێ سەرەکی دگەل هەلبژارتنا مۆدێلی و زمانان */}
       <header className="border-b border-slate-800/80 bg-slate-950/90 backdrop-blur-md px-3 sm:px-6 py-2.5 flex items-center justify-between sticky top-0 z-20 gap-2 w-full max-w-full">
         <div className="flex items-center gap-2 shrink-0">
@@ -284,11 +389,11 @@ export default function ChatPage() {
             className={`flex items-start gap-2.5 max-w-full ${m.role === 'user' ? 'flex-row' : 'flex-row-reverse'}`}
           >
             <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shrink-0 ${m.role === 'user' ? 'bg-purple-600' : 'bg-slate-800 border border-slate-700'}`}>
-             {m.role === 'user' ? (
-  <User size={14} />
-) : (
-  <img src="/logo.png" alt="AI" className="w-4 h-4 object-contain" />
-)}
+              {m.role === 'user' ? (
+                <User size={14} />
+              ) : (
+                <img src="/logo.png" alt="AI" className="w-4 h-4 object-contain" />
+              )}
             </div>
             
             <div
@@ -317,7 +422,7 @@ export default function ChatPage() {
                 </div>
               ) : (
                 <div className="max-w-full overflow-x-auto">
-                  {m.content}
+                  {renderMessageContent(m.content)}
                 </div>
               )}
             </div>
@@ -325,33 +430,29 @@ export default function ChatPage() {
         ))}
 
         {loading && (
-  <div className="flex items-center gap-2.5 flex-row-reverse">
-    {/* لۆگۆیێ براندێ تە د جهێ ڕۆبۆتی دا */}
-    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-purple-950/40 border border-purple-500/40 flex items-center justify-center shrink-0 overflow-hidden shadow-lg shadow-purple-900/30">
-      <img 
-        src="/logo.png" 
-        alt="IPBITS AI" 
-        className="w-5 h-5 object-contain animate-pulse" 
-      />
-    </div>
+          <div className="flex items-center gap-2.5 flex-row-reverse">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-purple-950/40 border border-purple-500/40 flex items-center justify-center shrink-0 overflow-hidden shadow-lg shadow-purple-900/30">
+              <img 
+                src="/logo.png" 
+                alt="IPBITS AI" 
+                className="w-5 h-5 object-contain animate-pulse" 
+              />
+            </div>
 
-    {/* تەپک و کارتێ هزرکرنێ دگەل لۆگۆ یان ئایکۆنێ بریسکەدار */}
-    <div className="bg-slate-900/90 border border-slate-800 px-3.5 py-2.5 rounded-2xl text-xs text-purple-300 flex items-center gap-2 shadow-md">
-      {/* تەپک/ئایکۆنێ بچویک یێ لۆگۆی ب ئەنیمەیشنا لەرزین و بریسکانێ */}
-      <span className="relative flex h-2.5 w-2.5">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
-        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-purple-500"></span>
-      </span>
-      <span>{t.thinking}</span>
-    </div>
-  </div>
-)}
+            <div className="bg-slate-900/90 border border-slate-800 px-3.5 py-2.5 rounded-2xl text-xs text-purple-300 flex items-center gap-2 shadow-md">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-purple-500"></span>
+              </span>
+              <span>{t.thinking}</span>
+            </div>
+          </div>
+        )}
         <div ref={chatEndRef} />
       </main>
 
       {/* فۆرمێ نڤیسینێ ل ژێرێ */}
       <footer className="p-2.5 sm:p-4 border-t border-slate-800/80 bg-slate-950/90 backdrop-blur-md sticky bottom-0 z-20 w-full">
-        
         {selectedImage && (
           <div className="max-w-4xl mx-auto mb-2 relative inline-block">
             <img 
@@ -370,7 +471,6 @@ export default function ChatPage() {
         )}
 
         <form onSubmit={handleSend} className="max-w-4xl mx-auto flex items-center gap-1.5 sm:gap-2">
-          
           <input
             type="file"
             accept=".js,.jsx,.ts,.tsx,.py,.html,.css,.json,.txt,.sql,.md,.env,.php,.cpp,.c,.java"
@@ -420,7 +520,6 @@ export default function ChatPage() {
           </button>
         </form>
       </footer>
-
     </div>
   );
 }

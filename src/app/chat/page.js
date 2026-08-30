@@ -5,19 +5,11 @@ import {
   X, Paperclip, Check, Copy, Download, Code2 
 } from 'lucide-react';
 
-// مۆدێلێن سەرەکی یێن VIP (ب پارە بۆ بەشداربوویان)
-const VIP_MODELS = [
-  { id: 'deepseek/deepseek-chat', name: 'DeepSeek V3 (⚡ VIP - ب پارە)' },
-  { id: 'deepseek/deepseek-r1', name: 'DeepSeek R1 (🧠 VIP - هزرکرن)' },
-  { id: 'openai/gpt-4o-mini', name: 'ChatGPT 4o Mini (⚡ VIP)' },
-  { id: 'black-forest-labs/flux-schnell', name: 'Flux Schnell (🎨 چێکرنا وێنەیان)' }
-];
-
 const TRANSLATIONS = {
   ku: {
-    welcome: 'سڵاڤ! ئەڤە پلاتفۆڕما IPBITS AI Hubە. پرسیارەکێ بنڤیسە، وێنەیان یان فایلێن کۆدی بهنێرە دا هاریکاریا تە بکەم.',
+    welcome: 'سڵاڤ! ئەڤە پلاتفۆڕما IPBITS AI Hubە. پتر ژ ٢٠٠ مۆدێلێن جیهانی ل بەر دەستێ تەنە. هەر پرسیارەکا تە هەبیت بنڤیسە دا هاریکاریا تە بکەم.',
     inputPlaceholder: 'پرسیارەکێ بنڤیسە...',
-    loadingModels: 'بارکرن...',
+    loadingModels: 'بارکرنا مۆدێلان...',
     thinking: 'د هزرکرنێ دایە...',
     imageCreated: '✨ وێنە هاتە دروستکرن',
     uploadFileTitle: 'بارکرنا فایل',
@@ -29,7 +21,7 @@ const TRANSLATIONS = {
     errorConnection: 'خەلەتیەک د گرێدانێ دا چێبوو.'
   },
   ar: {
-    welcome: 'مرحباً! هذه منصة IPBITS AI Hub. اكتب أي سؤال لديك، أو قم برفع الصور أو ملفات الأكواد البرمجية وسأقوم بمساعدتك فوراً.',
+    welcome: 'مرحباً! هذه منصة IPBITS AI Hub. أكثر من 200 نموذج ذكاء اصطناعي عالمي بين يديك. اكتب سؤالك وسأساعدك فوراً.',
     inputPlaceholder: 'اكتب سؤالك هنا...',
     loadingModels: 'جاري التحميل...',
     thinking: 'جاري التفكير...',
@@ -43,7 +35,7 @@ const TRANSLATIONS = {
     errorConnection: 'حدث خطأ في الاتصال بالخادم.'
   },
   en: {
-    welcome: 'Hello! Welcome to IPBITS AI Hub. Ask anything, upload images, or attach code files and I will assist you right away.',
+    welcome: 'Hello! Welcome to IPBITS AI Hub. Over 200+ global AI models at your fingertips. Ask anything to get started.',
     inputPlaceholder: 'Type your prompt here...',
     loadingModels: 'Loading...',
     thinking: 'Thinking...',
@@ -174,7 +166,8 @@ export default function ChatPage() {
   ]);
   const [input, setInput] = useState('');
   const [model, setModel] = useState('');
-  const [modelsList, setModelsList] = useState([]);
+  const [freeModels, setFreeModels] = useState([]);
+  const [paidModels, setPaidModels] = useState([]);
   const [loadingModels, setLoadingModels] = useState(true);
   const [loading, setLoading] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -188,27 +181,34 @@ export default function ChatPage() {
       .then((res) => res.json())
       .then((data) => {
         if (data && data.data && data.data.length > 0) {
-          // هلبژارتنا هەموو ئەو مۆدێلانەی بە دروستی بەلاشن لە OpenRouter
-          const workingFreeModels = data.data
-            .filter(m => m.id && m.id.endsWith(':free'))
-            .map(m => ({
-              id: m.id,
-              name: `🎁 [بێ بەرامبەر] ${m.name || m.id.split('/')[1]}`
-            }));
+          const frees = [];
+          const paids = [];
 
-          const allCombined = [...workingFreeModels, ...VIP_MODELS];
-          setModelsList(allCombined);
-          if (workingFreeModels.length > 0) {
-            setModel(workingFreeModels[0].id); // یەکەم مۆدێلی بەلاش ڕاستەوخۆ دیاری دەکات
-          } else {
-            setModel(VIP_MODELS[0].id);
+          data.data.forEach((m) => {
+            if (m.id && m.id.endsWith(':free')) {
+              frees.push(m);
+            } else {
+              paids.push(m);
+            }
+          });
+
+          // ڕێکخستنا ب ڕێزبەندییا ئەلفوبێ
+          paids.sort((a, b) => (a.name || a.id).localeCompare(b.name || b.id));
+          frees.sort((a, b) => (a.name || a.id).localeCompare(b.name || b.id));
+
+          setFreeModels(frees);
+          setPaidModels(paids);
+
+          // دیاریکردنی یەکەم مۆدێلی بەلاش بۆ دەستپێک
+          if (frees.length > 0) {
+            setModel(frees[0].id);
+          } else if (paids.length > 0) {
+            setModel(paids[0].id);
           }
         }
       })
       .catch((err) => {
-        console.error(err);
-        setModelsList(VIP_MODELS);
-        setModel(VIP_MODELS[0].id);
+        console.error('Error fetching models:', err);
       })
       .finally(() => {
         setLoadingModels(false);
@@ -375,11 +375,27 @@ export default function ChatPage() {
               onChange={(e) => setModel(e.target.value)}
               className="bg-slate-900 border border-slate-700 text-[11px] sm:text-xs rounded-xl px-2 py-1.5 text-purple-300 focus:outline-none focus:border-purple-500 cursor-pointer max-w-[130px] sm:max-w-xs truncate"
             >
-              {modelsList.map((m, i) => (
-                <option key={m.id || i} value={m.id} className="bg-slate-900 text-white">
-                  {m.name || m.id}
-                </option>
-              ))}
+              {/* کۆمەڵا مۆدێلێن بێ بەرامبەر */}
+              {freeModels.length > 0 && (
+                <optgroup label={lang === 'ar' ? '🎁 نماذج مجانية' : lang === 'en' ? '🎁 Free Models' : '🎁 مۆدێلێن بێ بەرامبەر'}>
+                  {freeModels.map((m) => (
+                    <option key={m.id} value={m.id} className="bg-slate-900 text-emerald-400">
+                      🎁 {m.name || m.id}
+                    </option>
+                  ))}
+                </optgroup>
+              )}
+
+              {/* کۆمەڵا مۆدێلێن پێشکەفتی یێن VIP بۆ فرۆشتنێ (پتر ژ ٢٠٠ مۆدێلان) */}
+              {paidModels.length > 0 && (
+                <optgroup label={lang === 'ar' ? '⚡ نماذج VIP المتقدمة (+200)' : lang === 'en' ? '⚡ VIP Models (+200)' : '⚡ مۆدێلێن VIP یێن پێشکەفتی (+200)'}>
+                  {paidModels.map((m) => (
+                    <option key={m.id} value={m.id} className="bg-slate-900 text-white">
+                      ⚡ {m.name || m.id}
+                    </option>
+                  ))}
+                </optgroup>
+              )}
             </select>
           )}
         </div>

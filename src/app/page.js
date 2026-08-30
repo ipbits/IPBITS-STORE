@@ -184,9 +184,10 @@ const LOCKED_PRODUCTS = [
 ];
 
 const PAYMENT_ACCOUNTS = {
-  FIB: { title: 'First Iraqi Bank (FIB)', number: '07504060378', note: 'Account / FIB: IPBITS' },
+  FIB: { title: 'First Iraqi Bank (FIB)', number: '07504060378', note: 'FIB Bank Account' },
   FastPay: { title: 'FastPay Wallet', number: '07504060378', note: 'FastPay Account' },
   ZainCash: { title: 'Zain Cash', number: '07504060378', note: 'Zain Cash Wallet' },
+  QiCard: { title: 'Qi Card (کی کارت)', number: '07504060378', note: 'Qi Services / Card Account' },
   PayPal: { title: 'PayPal', number: 'https://www.paypal.com/ncp/payment/VDDES8YRYJG46', note: 'Send via Friends & Family' },
   USDT: { title: 'USDT (TRC20)', number: 'TUeqkjzFdD7b1EtnAJL9tbzB1uN8wDbU6T', note: 'TRC20 Network Only' }
 };

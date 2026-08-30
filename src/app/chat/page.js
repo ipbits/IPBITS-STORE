@@ -7,14 +7,14 @@ import {
 
 // مۆدێلێن بنەڕەتی
 const DEFAULT_MODELS = [
-  { id: 'black-forest-labs/flux-schnell', name: 'Flux Schnell (🎨 وێنە)' },
-  { id: 'recraft-ai/recraft-20b', name: 'Recraft AI (🎨 وێنە)' },
+  { id: 'deepseek/deepseek-chat:free', name: 'DeepSeek V3 (🎁 بەلاش - تایبەت ب کۆد و دەقی)' },
   { id: 'google/gemini-2.0-flash-exp:free', name: 'Gemini 2.0 Flash (🎁 بەلاش)' },
-  { id: 'deepseek/deepseek-r1:free', name: 'DeepSeek R1 (🎁 بەلاش)' },
-  { id: 'deepseek/deepseek-chat:free', name: 'DeepSeek V3 (🎁 بەلاش)' },
+  { id: 'deepseek/deepseek-r1:free', name: 'DeepSeek R1 (🎁 بەلاش - هزرکرن)' },
   { id: 'meta-llama/llama-3.3-70b-instruct:free', name: 'Llama 3.3 70B (🎁 بەلاش)' },
   { id: 'openai/gpt-4o-mini', name: 'ChatGPT 4o Mini (⚡)' },
-  { id: 'anthropic/claude-3-5-haiku', name: 'Claude 3.5 Haiku (⚡)' }
+  { id: 'anthropic/claude-3-5-haiku', name: 'Claude 3.5 Haiku (⚡)' },
+  { id: 'black-forest-labs/flux-schnell', name: 'Flux Schnell (🎨 وێنە)' },
+  { id: 'recraft-ai/recraft-20b', name: 'Recraft AI (🎨 وێنە)' }
 ];
 
 const TRANSLATIONS = {

@@ -2,19 +2,74 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
   Send, Bot, User, Sparkles, Loader2, Image as ImageIcon, 
-  X, Paperclip, Globe, Check, Copy, Download, Code2 
+  X, Paperclip, Check, Copy, Download, Code2 
 } from 'lucide-react';
 
-// مۆدێلێن بنەڕەتی
-const DEFAULT_MODELS = [
-  { id: 'deepseek/deepseek-chat', name: 'DeepSeek V3 (⚡ ب هێز بۆ کۆد و نڤیسینێ)' },
-  { id: 'deepseek/deepseek-r1', name: 'DeepSeek R1 (🧠 مۆدێلێ هزرکرنێ)' },
-  { id: 'google/gemini-2.0-flash-001', name: 'Gemini 2.0 Flash (⚡ لەزاتیا بلەز)' },
-  { id: 'meta-llama/llama-3.3-70b-instruct', name: 'Llama 3.3 70B (🚀 هەمەلایەن)' },
-  { id: 'openai/gpt-4o-mini', name: 'ChatGPT 4o Mini (⚡)' },
-  { id: 'anthropic/claude-3-5-haiku', name: 'Claude 3.5 Haiku (⚡)' },
-  { id: 'black-forest-labs/flux-schnell', name: 'Flux Schnell (🎨 وێنە)' },
-  { id: 'recraft-ai/recraft-20b', name: 'Recraft AI (🎨 وێنە)' }
+const DEFAULT_MODELS_DATA = [
+  {
+    id: 'google/gemini-2.0-flash-lite-preview-02-05:free',
+    names: {
+      ku: 'Gemini 2.0 Flash Lite (⚡ بێ بەرامبەر - گەلەک خێرا)',
+      ar: 'Gemini 2.0 Flash Lite (⚡ مجاني - سريع جداً)',
+      en: 'Gemini 2.0 Flash Lite (⚡ Free - Super Fast)'
+    }
+  },
+  {
+    id: 'meta-llama/llama-3.3-70b-instruct:free',
+    names: {
+      ku: 'Llama 3.3 70B (🎁 بێ بەرامبەر - زۆر ب هێز)',
+      ar: 'Llama 3.3 70B (🎁 مجاني - قوي جداً)',
+      en: 'Llama 3.3 70B (🎁 Free - High Performance)'
+    }
+  },
+  {
+    id: 'qwen/qwen-2.5-coder-32b-instruct:free',
+    names: {
+      ku: 'Qwen Coder 32B (🎁 بێ بەرامبەر - پسپۆرێ کۆدان)',
+      ar: 'Qwen Coder 32B (🎁 مجاني - خبير الأكواد)',
+      en: 'Qwen Coder 32B (🎁 Free - Coding Specialist)'
+    }
+  },
+  {
+    id: 'mistralai/mistral-small-24b-instruct-2501:free',
+    names: {
+      ku: 'Mistral 24B (🎁 بێ بەرامبەر - نڤیسین)',
+      ar: 'Mistral 24B (🎁 مجاني - كتابة وصياغة)',
+      en: 'Mistral 24B (🎁 Free - Writing)'
+    }
+  },
+  {
+    id: 'deepseek/deepseek-chat',
+    names: {
+      ku: 'DeepSeek V3 (⚡ VIP - ب پارە)',
+      ar: 'DeepSeek V3 (⚡ VIP - مدفوع)',
+      en: 'DeepSeek V3 (⚡ VIP - Paid)'
+    }
+  },
+  {
+    id: 'deepseek/deepseek-r1',
+    names: {
+      ku: 'DeepSeek R1 (🧠 VIP - ب پارە / هزرکرن)',
+      ar: 'DeepSeek R1 (🧠 VIP - مدفوع / تفكير)',
+      en: 'DeepSeek R1 (🧠 VIP - Paid / Reasoning)'
+    }
+  },
+  {
+    id: 'openai/gpt-4o-mini',
+    names: {
+      ku: 'ChatGPT 4o Mini (⚡ VIP - ب پارە)',
+      ar: 'ChatGPT 4o Mini (⚡ VIP - مدفوع)',
+      en: 'ChatGPT 4o Mini (⚡ VIP - Paid)'
+    }
+  },
+  {
+    id: 'black-forest-labs/flux-schnell',
+    names: {
+      ku: 'Flux Schnell (🎨 ب پارە - چێکرنا وێنەیان)',
+      ar: 'Flux Schnell (🎨 مدفوع - توليد صور)',
+      en: 'Flux Schnell (🎨 Paid - Image Generation)'
+    }
+  }
 ];
 
 const TRANSLATIONS = {
@@ -62,10 +117,8 @@ const TRANSLATIONS = {
   }
 };
 
-// کۆمپۆنێنتێ نیشاندانا کۆدی دگەل دوگمەیێن کۆپیکرن و داونلۆدکرنا فایلی
 function CodeBlock({ code, language }) {
   const [copied, setCopied] = useState(false);
-
   const cleanLang = (language || 'code').trim().toLowerCase();
   
   const getExtension = (lang) => {
@@ -87,27 +140,35 @@ function CodeBlock({ code, language }) {
       case 'c++': return 'cpp';
       case 'c': return 'c';
       case 'java': return 'java';
-      case 'sh':
-      case 'bash': return 'sh';
       default: return 'txt';
     }
   };
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(code);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      navigator.clipboard.writeText(code);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const handleDownload = () => {
-    const ext = getExtension(cleanLang);
-    const blob = new Blob([code], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `code-${Date.now()}.${ext}`;
-    a.click();
-    URL.revokeObjectURL(url);
+    try {
+      const ext = getExtension(cleanLang);
+      const blob = new Blob([code], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `code-${Date.now()}.${ext}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (
@@ -122,7 +183,6 @@ function CodeBlock({ code, language }) {
             type="button"
             onClick={handleCopy}
             className="flex items-center gap-1 px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition active:scale-95"
-            title="Copy Code"
           >
             {copied ? <Check className="text-emerald-400" size={13} /> : <Copy size={13} />}
             <span className="text-[10px]">{copied ? 'Copied' : 'Copy'}</span>
@@ -131,7 +191,6 @@ function CodeBlock({ code, language }) {
             type="button"
             onClick={handleDownload}
             className="flex items-center gap-1 px-2.5 py-1 bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 border border-purple-500/30 rounded-lg transition active:scale-95"
-            title="Download as File"
           >
             <Download size={13} />
             <span className="text-[10px]">.{getExtension(cleanLang)}</span>
@@ -145,14 +204,12 @@ function CodeBlock({ code, language }) {
   );
 }
 
-// فەنکشنا جوداکرنا دەقی و کۆدان د ناڤ پەیامێ دا
 function renderMessageContent(content) {
   if (typeof content !== 'string') return content;
-
   const parts = content.split(/(```[\s\S]*?```)/g);
 
   return parts.map((part, index) => {
-    if (part.startsWith('```') && part.endsWith('```')) {
+    if (part && part.startsWith('```') && part.endsWith('```')) {
       const match = part.match(/```(\w+)?\n?([\s\S]*?)```/);
       const language = match ? match[1] || 'code' : 'code';
       const code = match ? match[2].trim() : part.slice(3, -3).trim();
@@ -166,18 +223,31 @@ function renderMessageContent(content) {
   });
 }
 
+function getModelDisplayName(m, currentLang) {
+  if (!m) return '';
+  const matched = DEFAULT_MODELS_DATA.find((item) => item.id === m.id);
+  if (matched && matched.names) {
+    return matched.names[currentLang] || matched.names.ku;
+  }
+  if (m.id && typeof m.id === 'string' && m.id.includes(':free')) {
+    const label = currentLang === 'ar' ? '(مجاني)' : currentLang === 'en' ? '(Free)' : '(بێ بەرامبەر)';
+    return `${m.name || m.id} ${label}`;
+  }
+  return m.name || m.id || '';
+}
+
 export default function ChatPage() {
-  const [lang, setLang] = useState('ku'); // 'ku' | 'ar' | 'en'
-  const t = TRANSLATIONS[lang];
+  const [lang, setLang] = useState('ku');
+  const t = TRANSLATIONS[lang] || TRANSLATIONS.ku;
   const isRtl = lang !== 'en';
 
   const [messages, setMessages] = useState([
     { role: 'assistant', content: TRANSLATIONS.ku.welcome }
   ]);
   const [input, setInput] = useState('');
-  const [model, setModel] = useState(DEFAULT_MODELS[0].id);
-  const [modelsList, setModelsList] = useState(DEFAULT_MODELS);
-  const [loadingModels, setLoadingModels] = useState(true);
+  const [model, setModel] = useState(DEFAULT_MODELS_DATA[0].id);
+  const [modelsList, setModelsList] = useState(DEFAULT_MODELS_DATA);
+  const [loadingModels, setLoadingModels] = useState(false);
   const [loading, setLoading] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   
@@ -185,38 +255,31 @@ export default function ChatPage() {
   const fileInputRef = useRef(null);
   const codeFileInputRef = useRef(null);
 
-  const handleLangChange = (newLang) => {
-    setLang(newLang);
-    if (messages.length === 1 && messages[0].role === 'assistant') {
-      setMessages([{ role: 'assistant', content: TRANSLATIONS[newLang].welcome }]);
-    }
-  };
-
   useEffect(() => {
     fetch('https://openrouter.ai/api/v1/models')
       .then((res) => res.json())
       .then((data) => {
         if (data && data.data && data.data.length > 0) {
-          // جوداکرنا مۆدێلێن سەرەکی دا دووبارە نەبنەڤە
-          const defaultIds = new Set(DEFAULT_MODELS.map(m => m.id));
-          const otherModels = data.data.filter(m => !defaultIds.has(m.id));
-
-          // دانانا DEFAULT_MODELS ل سەرێ لیستێ و مۆدێلێن دی ل ژێر
-          setModelsList([...DEFAULT_MODELS, ...otherModels]);
-          setModel(DEFAULT_MODELS[0].id); // هەلبژارتنا مۆدێلێ ئێکێ ب بنەڕەت
+          const defaultIds = new Set(DEFAULT_MODELS_DATA.map(m => m.id));
+          const otherModels = data.data.filter(m => m && m.id && !defaultIds.has(m.id));
+          setModelsList([...DEFAULT_MODELS_DATA, ...otherModels]);
         }
       })
       .catch((err) => {
-        console.error('ئاریشە د بارکرنا مۆدێلان دا:', err);
-      })
-      .finally(() => {
-        setLoadingModels(false);
+        console.error(err);
       });
   }, []);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  const handleLangChange = (newLang) => {
+    setLang(newLang);
+    if (messages.length === 1 && messages[0].role === 'assistant') {
+      setMessages([{ role: 'assistant', content: TRANSLATIONS[newLang].welcome }]);
+    }
+  };
 
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
@@ -315,7 +378,6 @@ export default function ChatPage() {
       dir={isRtl ? 'rtl' : 'ltr'} 
       className="min-h-screen w-full max-w-full overflow-x-hidden bg-[#070913] text-white flex flex-col justify-between font-sans selection:bg-purple-600"
     >
-      {/* هێدەرێ سەرەکی دگەل هەلبژارتنا مۆدێلی و زمانان */}
       <header className="border-b border-slate-800/80 bg-slate-950/90 backdrop-blur-md px-3 sm:px-6 py-2.5 flex items-center justify-between sticky top-0 z-20 gap-2 w-full max-w-full">
         <div className="flex items-center gap-2 shrink-0">
           <div className="w-8 h-8 sm:w-9 sm:h-9 bg-purple-600/20 border border-purple-500/30 rounded-xl flex items-center justify-center shadow-lg shadow-purple-900/20 shrink-0">
@@ -327,7 +389,6 @@ export default function ChatPage() {
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          {/* دوگمەیێن زمانان */}
           <div className="flex items-center gap-1 bg-slate-900 border border-slate-800 p-1 rounded-xl">
             <button
               type="button"
@@ -358,29 +419,20 @@ export default function ChatPage() {
             </button>
           </div>
 
-          {/* لیستا مۆدێلان */}
-          {loadingModels ? (
-            <div className="flex items-center gap-1 text-[11px] text-purple-300 bg-slate-900 px-2.5 py-1.5 rounded-xl border border-slate-800">
-              <Loader2 size={12} className="animate-spin text-purple-400" />
-              <span>{t.loadingModels}</span>
-            </div>
-          ) : (
-            <select
-              value={model}
-              onChange={(e) => setModel(e.target.value)}
-              className="bg-slate-900 border border-slate-700 text-[11px] sm:text-xs rounded-xl px-2 py-1.5 text-purple-300 focus:outline-none focus:border-purple-500 cursor-pointer max-w-[120px] sm:max-w-xs truncate"
-            >
-              {modelsList.map((m) => (
-                <option key={m.id} value={m.id} className="bg-slate-900 text-white">
-                  {m.name || m.id}
-                </option>
-              ))}
-            </select>
-          )}
+          <select
+            value={model}
+            onChange={(e) => setModel(e.target.value)}
+            className="bg-slate-900 border border-slate-700 text-[11px] sm:text-xs rounded-xl px-2 py-1.5 text-purple-300 focus:outline-none focus:border-purple-500 cursor-pointer max-w-[120px] sm:max-w-xs truncate"
+          >
+            {modelsList.map((m, i) => (
+              <option key={m.id || i} value={m.id} className="bg-slate-900 text-white">
+                {getModelDisplayName(m, lang)}
+              </option>
+            ))}
+          </select>
         </div>
       </header>
 
-      {/* بەشێ نامە و بەرسڤان */}
       <main className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-4 max-w-4xl w-full mx-auto">
         {messages.map((m, idx) => (
           <div
@@ -391,7 +443,7 @@ export default function ChatPage() {
               {m.role === 'user' ? (
                 <User size={14} />
               ) : (
-                <img src="/logo.png" alt="AI" className="w-4 h-4 object-contain" />
+                <Sparkles size={14} className="text-purple-400" />
               )}
             </div>
             
@@ -431,11 +483,7 @@ export default function ChatPage() {
         {loading && (
           <div className="flex items-center gap-2.5 flex-row-reverse">
             <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-purple-950/40 border border-purple-500/40 flex items-center justify-center shrink-0 overflow-hidden shadow-lg shadow-purple-900/30">
-              <img 
-                src="/logo.png" 
-                alt="IPBITS AI" 
-                className="w-5 h-5 object-contain animate-pulse" 
-              />
+              <Sparkles size={14} className="text-purple-400 animate-spin" />
             </div>
 
             <div className="bg-slate-900/90 border border-slate-800 px-3.5 py-2.5 rounded-2xl text-xs text-purple-300 flex items-center gap-2 shadow-md">
@@ -450,7 +498,6 @@ export default function ChatPage() {
         <div ref={chatEndRef} />
       </main>
 
-      {/* فۆرمێ نڤیسینێ ل ژێرێ */}
       <footer className="p-2.5 sm:p-4 border-t border-slate-800/80 bg-slate-950/90 backdrop-blur-md sticky bottom-0 z-20 w-full">
         {selectedImage && (
           <div className="max-w-4xl mx-auto mb-2 relative inline-block">

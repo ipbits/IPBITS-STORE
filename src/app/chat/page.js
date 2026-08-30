@@ -197,14 +197,13 @@ export default function ChatPage() {
       .then((res) => res.json())
       .then((data) => {
         if (data && data.data && data.data.length > 0) {
-          const sorted = data.data.sort((a, b) => {
-            const aFree = a.id.includes(':free');
-            const bFree = b.id.includes(':free');
-            if (aFree && !bFree) return -1;
-            if (!aFree && bFree) return 1;
-            return a.name.localeCompare(b.name);
-          });
-          setModelsList(sorted);
+          // جوداکرنا مۆدێلێن سەرەکی دا دووبارە نەبنەڤە
+          const defaultIds = new Set(DEFAULT_MODELS.map(m => m.id));
+          const otherModels = data.data.filter(m => !defaultIds.has(m.id));
+
+          // دانانا DEFAULT_MODELS ل سەرێ لیستێ و مۆدێلێن دی ل ژێر
+          setModelsList([...DEFAULT_MODELS, ...otherModels]);
+          setModel(DEFAULT_MODELS[0].id); // هەلبژارتنا مۆدێلێ ئێکێ ب بنەڕەت
         }
       })
       .catch((err) => {

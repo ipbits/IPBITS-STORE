@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, Sparkles, Loader2, Image as ImageIcon, X, Paperclip } from 'lucide-react';
+import { Send, Bot, User, Sparkles, Loader2, Image as ImageIcon, X, Paperclip, Globe } from 'lucide-react';
 
 // مۆدێلێن بنەڕەتی
 const DEFAULT_MODELS = [
@@ -14,9 +14,58 @@ const DEFAULT_MODELS = [
   { id: 'anthropic/claude-3-5-haiku', name: 'Claude 3.5 Haiku (⚡)' }
 ];
 
+const TRANSLATIONS = {
+  ku: {
+    welcome: 'سڵاڤ! ئەڤە پلاتفۆڕما IPBITS AI Hubە. هەر پرسیارەکا تە هەبیت بنڤیسە، وێنەیان بار بکە یان فایلێن کۆدی بهنێرە دا هاریکاریا تە بکەم.',
+    inputPlaceholder: 'پرسیارەکێ بنڤیسە...',
+    loadingModels: 'بارکرن...',
+    thinking: 'د هزرکرنێ دایە...',
+    imageCreated: '✨ وێنە هاتە دروستکرن',
+    uploadFileTitle: 'بارکرنا فایل',
+    uploadImageTitle: 'بارکرنا وێنە',
+    analyzePrompt: 'ڤی وێنەی شیکار بکە:',
+    fileHeader: '📄 [فایل: ',
+    errorPrefix: 'ببورە، ئاریشەیەک چێبوو: ',
+    errorDefault: 'پەیوەندی دروست نەبوو',
+    errorConnection: 'خەلەتیەک د گرێدانێ دا چێبوو.'
+  },
+  ar: {
+    welcome: 'مرحباً! هذه منصة IPBITS AI Hub. اكتب أي سؤال لديك، أو قم برفع الصور أو ملفات الأكواد البرمجية وسأقوم بمساعدتك فوراً.',
+    inputPlaceholder: 'اكتب سؤالك هنا...',
+    loadingModels: 'جاري التحميل...',
+    thinking: 'جاري التفكير...',
+    imageCreated: '✨ تم إنشاء الصورة',
+    uploadFileTitle: 'رفع ملف',
+    uploadImageTitle: 'رفع صورة',
+    analyzePrompt: 'قم بتحليل هذه الصورة:',
+    fileHeader: '📄 [ملف: ',
+    errorPrefix: 'عذراً، حدث خطأ: ',
+    errorDefault: 'لم يتم الاتصال بنجاح',
+    errorConnection: 'حدث خطأ في الاتصال بالخادم.'
+  },
+  en: {
+    welcome: 'Hello! Welcome to IPBITS AI Hub. Ask anything, upload images, or attach code files and I will assist you right away.',
+    inputPlaceholder: 'Type your prompt here...',
+    loadingModels: 'Loading...',
+    thinking: 'Thinking...',
+    imageCreated: '✨ Image generated',
+    uploadFileTitle: 'Upload file',
+    uploadImageTitle: 'Upload image',
+    analyzePrompt: 'Analyze this image:',
+    fileHeader: '📄 [File: ',
+    errorPrefix: 'Sorry, an error occurred: ',
+    errorDefault: 'Connection failed',
+    errorConnection: 'A network connection error occurred.'
+  }
+};
+
 export default function ChatPage() {
+  const [lang, setLang] = useState('ku'); // 'ku' | 'ar' | 'en'
+  const t = TRANSLATIONS[lang];
+  const isRtl = lang !== 'en';
+
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: 'سڵاڤ! ئەڤە پلاتفۆڕما IPBITS AI Hubە. هەر پرسیارەکا تە هەبیت بنڤیسە، وێنەیان بار بکە یان فایلێن کۆدی بهنێرە دا هاریکاریا تە بکەم.' }
+    { role: 'assistant', content: TRANSLATIONS.ku.welcome }
   ]);
   const [input, setInput] = useState('');
   const [model, setModel] = useState(DEFAULT_MODELS[0].id);
@@ -28,6 +77,14 @@ export default function ChatPage() {
   const chatEndRef = useRef(null);
   const fileInputRef = useRef(null);
   const codeFileInputRef = useRef(null);
+
+  // گۆڕینا پەیاما دەستپێکێ دەمێ زمان دهێتە گۆڕین ئەگەر تەنێ پەیاما ئێکێ بیت
+  const handleLangChange = (newLang) => {
+    setLang(newLang);
+    if (messages.length === 1 && messages[0].role === 'assistant') {
+      setMessages([{ role: 'assistant', content: TRANSLATIONS[newLang].welcome }]);
+    }
+  };
 
   useEffect(() => {
     fetch('https://openrouter.ai/api/v1/models')
@@ -74,7 +131,7 @@ export default function ChatPage() {
       reader.onload = (event) => {
         const fileContent = event.target?.result;
         setInput((prev) => {
-          const header = `\n\n📄 [فایل: ${file.name}]\n\`\`\`\n`;
+          const header = `\n\n${t.fileHeader}${file.name}]\n\`\`\`\n`;
           const footer = `\n\`\`\`\n`;
           return prev ? `${prev}${header}${fileContent}${footer}` : `${header}${fileContent}${footer}`;
         });
@@ -113,7 +170,7 @@ export default function ChatPage() {
           return {
             role: m.role,
             content: [
-              { type: 'text', text: m.content || 'ڤی وێنەی شیکار بکە:' },
+              { type: 'text', text: m.content || t.analyzePrompt },
               { type: 'image_url', image_url: { url: m.image } }
             ]
           };
@@ -139,40 +196,75 @@ export default function ChatPage() {
         const replyText = data.reply || data.choices[0].message.content;
         setMessages(prev => [...prev, { role: 'assistant', content: replyText }]);
       } else {
-        setMessages(prev => [...prev, { role: 'assistant', content: 'ببورە، ئاریشەیەک چێبوو: ' + (data.error || 'پەیوەندی دروست نەبوو') }]);
+        setMessages(prev => [...prev, { role: 'assistant', content: t.errorPrefix + (data.error || t.errorDefault) }]);
       }
     } catch (err) {
-      setMessages(prev => [...prev, { role: 'assistant', content: 'خەلەتیەک د گرێدانێ دا چێبوو.' }]);
+      setMessages(prev => [...prev, { role: 'assistant', content: t.errorConnection }]);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-[#070913] text-white flex flex-col justify-between font-sans" dir="rtl">
+    <div 
+      dir={isRtl ? 'rtl' : 'ltr'} 
+      className="min-h-screen w-full max-w-full overflow-x-hidden bg-[#070913] text-white flex flex-col justify-between font-sans selection:bg-purple-600"
+    >
       
-      {/* هێدەرێ ستاندارد و پاراستی */}
-      <header className="border-b border-slate-800/80 bg-slate-950/90 backdrop-blur-md px-3 sm:px-6 py-3 flex items-center justify-between sticky top-0 z-20 gap-2 w-full max-w-full">
+      {/* هێدەرێ سەرەکی دگەل هەلبژارتنا مۆدێلی و زمانان */}
+      <header className="border-b border-slate-800/80 bg-slate-950/90 backdrop-blur-md px-3 sm:px-6 py-2.5 flex items-center justify-between sticky top-0 z-20 gap-2 w-full max-w-full">
         <div className="flex items-center gap-2 shrink-0">
           <div className="w-8 h-8 sm:w-9 sm:h-9 bg-purple-600/20 border border-purple-500/30 rounded-xl flex items-center justify-center shadow-lg shadow-purple-900/20 shrink-0">
             <Sparkles className="text-purple-400" size={16} />
           </div>
-          <span className="font-black text-sm sm:text-base tracking-wide bg-gradient-to-r from-purple-400 to-indigo-300 bg-clip-text text-transparent truncate">
+          <span className="font-black text-xs sm:text-sm tracking-wide bg-gradient-to-r from-purple-400 to-indigo-300 bg-clip-text text-transparent truncate">
             IPBITS AI HUB
           </span>
         </div>
 
-        <div className="flex items-center gap-1.5 shrink-0">
+        <div className="flex items-center gap-2 shrink-0">
+          {/* دوگمەیێن زمانان */}
+          <div className="flex items-center gap-1 bg-slate-900 border border-slate-800 p-1 rounded-xl">
+            <button
+              type="button"
+              onClick={() => handleLangChange('ku')}
+              className={`px-2 py-0.5 text-[10px] sm:text-xs rounded-lg transition-all ${
+                lang === 'ku' ? 'bg-purple-600 text-white font-bold' : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              کوردى
+            </button>
+            <button
+              type="button"
+              onClick={() => handleLangChange('ar')}
+              className={`px-2 py-0.5 text-[10px] sm:text-xs rounded-lg transition-all ${
+                lang === 'ar' ? 'bg-purple-600 text-white font-bold' : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              عربي
+            </button>
+            <button
+              type="button"
+              onClick={() => handleLangChange('en')}
+              className={`px-2 py-0.5 text-[10px] sm:text-xs rounded-lg transition-all ${
+                lang === 'en' ? 'bg-purple-600 text-white font-bold' : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              EN
+            </button>
+          </div>
+
+          {/* لیستا مۆدێلان */}
           {loadingModels ? (
             <div className="flex items-center gap-1 text-[11px] text-purple-300 bg-slate-900 px-2.5 py-1.5 rounded-xl border border-slate-800">
               <Loader2 size={12} className="animate-spin text-purple-400" />
-              <span>بارکرن...</span>
+              <span>{t.loadingModels}</span>
             </div>
           ) : (
             <select
               value={model}
               onChange={(e) => setModel(e.target.value)}
-              className="bg-slate-900 border border-slate-700 text-[11px] sm:text-xs rounded-xl px-2 py-1.5 text-purple-300 focus:outline-none focus:border-purple-500 cursor-pointer max-w-[140px] sm:max-w-xs truncate"
+              className="bg-slate-900 border border-slate-700 text-[11px] sm:text-xs rounded-xl px-2 py-1.5 text-purple-300 focus:outline-none focus:border-purple-500 cursor-pointer max-w-[120px] sm:max-w-xs truncate"
             >
               {modelsList.map((m) => (
                 <option key={m.id} value={m.id} className="bg-slate-900 text-white">
@@ -217,7 +309,7 @@ export default function ChatPage() {
                     alt="AI Generated" 
                     className="rounded-2xl max-w-full w-full border border-purple-500 shadow-xl object-cover" 
                   />
-                  <span className="text-[10px] text-purple-300 block">✨ وێنە هاتە دروستکرن</span>
+                  <span className="text-[10px] text-purple-300 block">{t.imageCreated}</span>
                 </div>
               ) : (
                 <div className="max-w-full overflow-x-auto">
@@ -235,7 +327,7 @@ export default function ChatPage() {
             </div>
             <div className="bg-slate-900/90 border border-slate-800 px-3.5 py-2.5 rounded-2xl text-xs text-slate-400 flex items-center gap-2">
               <span className="w-2 h-2 bg-purple-500 rounded-full animate-ping"></span>
-              د هزرکرنێ دایە...
+              {t.thinking}
             </div>
           </div>
         )}
@@ -275,7 +367,7 @@ export default function ChatPage() {
             type="button"
             onClick={() => codeFileInputRef.current?.click()}
             className="bg-slate-900 hover:bg-slate-800 text-purple-400 border border-slate-800 p-2.5 sm:p-3 rounded-xl transition-all shrink-0 cursor-pointer"
-            title="بارکرنا فایل"
+            title={t.uploadFileTitle}
           >
             <Paperclip size={16} />
           </button>
@@ -291,7 +383,7 @@ export default function ChatPage() {
             type="button"
             onClick={() => fileInputRef.current?.click()}
             className="bg-slate-900 hover:bg-slate-800 text-purple-400 border border-slate-800 p-2.5 sm:p-3 rounded-xl transition-all shrink-0 cursor-pointer"
-            title="بارکرنا وێنە"
+            title={t.uploadImageTitle}
           >
             <ImageIcon size={16} />
           </button>
@@ -300,7 +392,7 @@ export default function ChatPage() {
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="پرسیارەکێ بنڤیسە..."
+            placeholder={t.inputPlaceholder}
             className="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 transition-colors min-w-0"
           />
           
@@ -309,7 +401,7 @@ export default function ChatPage() {
             disabled={(!input.trim() && !selectedImage) || loading}
             className="bg-purple-600 hover:bg-purple-500 disabled:opacity-40 text-white p-2.5 sm:p-3 rounded-xl transition-all shrink-0 cursor-pointer shadow-md shadow-purple-600/30"
           >
-            <Send size={16} className="transform rotate-180" />
+            <Send size={16} className={isRtl ? "transform rotate-180" : ""} />
           </button>
         </form>
       </footer>

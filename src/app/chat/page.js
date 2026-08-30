@@ -5,76 +5,17 @@ import {
   X, Paperclip, Check, Copy, Download, Code2 
 } from 'lucide-react';
 
-const DEFAULT_MODELS_DATA = [
-  {
-    id: 'google/gemini-2.0-flash-lite-preview-02-05:free',
-    names: {
-      ku: 'Gemini 2.0 Flash Lite (⚡ بێ بەرامبەر - گەلەک خێرا)',
-      ar: 'Gemini 2.0 Flash Lite (⚡ مجاني - سريع جداً)',
-      en: 'Gemini 2.0 Flash Lite (⚡ Free - Super Fast)'
-    }
-  },
-  {
-    id: 'meta-llama/llama-3.3-70b-instruct:free',
-    names: {
-      ku: 'Llama 3.3 70B (🎁 بێ بەرامبەر - زۆر ب هێز)',
-      ar: 'Llama 3.3 70B (🎁 مجاني - قوي جداً)',
-      en: 'Llama 3.3 70B (🎁 Free - High Performance)'
-    }
-  },
-  {
-    id: 'qwen/qwen-2.5-coder-32b-instruct:free',
-    names: {
-      ku: 'Qwen Coder 32B (🎁 بێ بەرامبەر - پسپۆرێ کۆدان)',
-      ar: 'Qwen Coder 32B (🎁 مجاني - خبير الأكواد)',
-      en: 'Qwen Coder 32B (🎁 Free - Coding Specialist)'
-    }
-  },
-  {
-    id: 'mistralai/mistral-small-24b-instruct-2501:free',
-    names: {
-      ku: 'Mistral 24B (🎁 بێ بەرامبەر - نڤیسین)',
-      ar: 'Mistral 24B (🎁 مجاني - كتابة وصياغة)',
-      en: 'Mistral 24B (🎁 Free - Writing)'
-    }
-  },
-  {
-    id: 'deepseek/deepseek-chat',
-    names: {
-      ku: 'DeepSeek V3 (⚡ VIP - ب پارە)',
-      ar: 'DeepSeek V3 (⚡ VIP - مدفوع)',
-      en: 'DeepSeek V3 (⚡ VIP - Paid)'
-    }
-  },
-  {
-    id: 'deepseek/deepseek-r1',
-    names: {
-      ku: 'DeepSeek R1 (🧠 VIP - ب پارە / هزرکرن)',
-      ar: 'DeepSeek R1 (🧠 VIP - مدفوع / تفكير)',
-      en: 'DeepSeek R1 (🧠 VIP - Paid / Reasoning)'
-    }
-  },
-  {
-    id: 'openai/gpt-4o-mini',
-    names: {
-      ku: 'ChatGPT 4o Mini (⚡ VIP - ب پارە)',
-      ar: 'ChatGPT 4o Mini (⚡ VIP - مدفوع)',
-      en: 'ChatGPT 4o Mini (⚡ VIP - Paid)'
-    }
-  },
-  {
-    id: 'black-forest-labs/flux-schnell',
-    names: {
-      ku: 'Flux Schnell (🎨 ب پارە - چێکرنا وێنەیان)',
-      ar: 'Flux Schnell (🎨 مدفوع - توليد صور)',
-      en: 'Flux Schnell (🎨 Paid - Image Generation)'
-    }
-  }
+// مۆدێلێن سەرەکی یێن VIP (ب پارە بۆ بەشداربوویان)
+const VIP_MODELS = [
+  { id: 'deepseek/deepseek-chat', name: 'DeepSeek V3 (⚡ VIP - ب پارە)' },
+  { id: 'deepseek/deepseek-r1', name: 'DeepSeek R1 (🧠 VIP - هزرکرن)' },
+  { id: 'openai/gpt-4o-mini', name: 'ChatGPT 4o Mini (⚡ VIP)' },
+  { id: 'black-forest-labs/flux-schnell', name: 'Flux Schnell (🎨 چێکرنا وێنەیان)' }
 ];
 
 const TRANSLATIONS = {
   ku: {
-    welcome: 'سڵاڤ! ئەڤە پلاتفۆڕما IPBITS AI Hubە. هەر پرسیارەکا تە هەبیت بنڤیسە، وێنەیان بار بکە یان فایلێن کۆدی بهنێرە دا هاریکاریا تە بکەم.',
+    welcome: 'سڵاڤ! ئەڤە پلاتفۆڕما IPBITS AI Hubە. پرسیارەکێ بنڤیسە، وێنەیان یان فایلێن کۆدی بهنێرە دا هاریکاریا تە بکەم.',
     inputPlaceholder: 'پرسیارەکێ بنڤیسە...',
     loadingModels: 'بارکرن...',
     thinking: 'د هزرکرنێ دایە...',
@@ -223,19 +164,6 @@ function renderMessageContent(content) {
   });
 }
 
-function getModelDisplayName(m, currentLang) {
-  if (!m) return '';
-  const matched = DEFAULT_MODELS_DATA.find((item) => item.id === m.id);
-  if (matched && matched.names) {
-    return matched.names[currentLang] || matched.names.ku;
-  }
-  if (m.id && typeof m.id === 'string' && m.id.includes(':free')) {
-    const label = currentLang === 'ar' ? '(مجاني)' : currentLang === 'en' ? '(Free)' : '(بێ بەرامبەر)';
-    return `${m.name || m.id} ${label}`;
-  }
-  return m.name || m.id || '';
-}
-
 export default function ChatPage() {
   const [lang, setLang] = useState('ku');
   const t = TRANSLATIONS[lang] || TRANSLATIONS.ku;
@@ -245,9 +173,9 @@ export default function ChatPage() {
     { role: 'assistant', content: TRANSLATIONS.ku.welcome }
   ]);
   const [input, setInput] = useState('');
-  const [model, setModel] = useState(DEFAULT_MODELS_DATA[0].id);
-  const [modelsList, setModelsList] = useState(DEFAULT_MODELS_DATA);
-  const [loadingModels, setLoadingModels] = useState(false);
+  const [model, setModel] = useState('');
+  const [modelsList, setModelsList] = useState([]);
+  const [loadingModels, setLoadingModels] = useState(true);
   const [loading, setLoading] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   
@@ -260,13 +188,30 @@ export default function ChatPage() {
       .then((res) => res.json())
       .then((data) => {
         if (data && data.data && data.data.length > 0) {
-          const defaultIds = new Set(DEFAULT_MODELS_DATA.map(m => m.id));
-          const otherModels = data.data.filter(m => m && m.id && !defaultIds.has(m.id));
-          setModelsList([...DEFAULT_MODELS_DATA, ...otherModels]);
+          // هلبژارتنا هەموو ئەو مۆدێلانەی بە دروستی بەلاشن لە OpenRouter
+          const workingFreeModels = data.data
+            .filter(m => m.id && m.id.endsWith(':free'))
+            .map(m => ({
+              id: m.id,
+              name: `🎁 [بێ بەرامبەر] ${m.name || m.id.split('/')[1]}`
+            }));
+
+          const allCombined = [...workingFreeModels, ...VIP_MODELS];
+          setModelsList(allCombined);
+          if (workingFreeModels.length > 0) {
+            setModel(workingFreeModels[0].id); // یەکەم مۆدێلی بەلاش ڕاستەوخۆ دیاری دەکات
+          } else {
+            setModel(VIP_MODELS[0].id);
+          }
         }
       })
       .catch((err) => {
         console.error(err);
+        setModelsList(VIP_MODELS);
+        setModel(VIP_MODELS[0].id);
+      })
+      .finally(() => {
+        setLoadingModels(false);
       });
   }, []);
 
@@ -419,17 +364,24 @@ export default function ChatPage() {
             </button>
           </div>
 
-          <select
-            value={model}
-            onChange={(e) => setModel(e.target.value)}
-            className="bg-slate-900 border border-slate-700 text-[11px] sm:text-xs rounded-xl px-2 py-1.5 text-purple-300 focus:outline-none focus:border-purple-500 cursor-pointer max-w-[120px] sm:max-w-xs truncate"
-          >
-            {modelsList.map((m, i) => (
-              <option key={m.id || i} value={m.id} className="bg-slate-900 text-white">
-                {getModelDisplayName(m, lang)}
-              </option>
-            ))}
-          </select>
+          {loadingModels ? (
+            <div className="flex items-center gap-1 text-[11px] text-purple-300 bg-slate-900 px-2.5 py-1.5 rounded-xl border border-slate-800">
+              <Loader2 size={12} className="animate-spin text-purple-400" />
+              <span>{t.loadingModels}</span>
+            </div>
+          ) : (
+            <select
+              value={model}
+              onChange={(e) => setModel(e.target.value)}
+              className="bg-slate-900 border border-slate-700 text-[11px] sm:text-xs rounded-xl px-2 py-1.5 text-purple-300 focus:outline-none focus:border-purple-500 cursor-pointer max-w-[130px] sm:max-w-xs truncate"
+            >
+              {modelsList.map((m, i) => (
+                <option key={m.id || i} value={m.id} className="bg-slate-900 text-white">
+                  {m.name || m.id}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
       </header>
 

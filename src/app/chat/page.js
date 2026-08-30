@@ -284,7 +284,11 @@ export default function ChatPage() {
             className={`flex items-start gap-2.5 max-w-full ${m.role === 'user' ? 'flex-row' : 'flex-row-reverse'}`}
           >
             <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shrink-0 ${m.role === 'user' ? 'bg-purple-600' : 'bg-slate-800 border border-slate-700'}`}>
-              {m.role === 'user' ? <User size={14} /> : <Bot size={14} className="text-purple-400" />}
+             {m.role === 'user' ? (
+  <User size={14} />
+) : (
+  <img src="/logo.png" alt="AI" className="w-4 h-4 object-contain" />
+)}
             </div>
             
             <div
@@ -321,16 +325,27 @@ export default function ChatPage() {
         ))}
 
         {loading && (
-          <div className="flex items-center gap-2.5 flex-row-reverse">
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center shrink-0">
-              <Bot size={14} className="text-purple-400 animate-pulse" />
-            </div>
-            <div className="bg-slate-900/90 border border-slate-800 px-3.5 py-2.5 rounded-2xl text-xs text-slate-400 flex items-center gap-2">
-              <span className="w-2 h-2 bg-purple-500 rounded-full animate-ping"></span>
-              {t.thinking}
-            </div>
-          </div>
-        )}
+  <div className="flex items-center gap-2.5 flex-row-reverse">
+    {/* لۆگۆیێ براندێ تە د جهێ ڕۆبۆتی دا */}
+    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-purple-950/40 border border-purple-500/40 flex items-center justify-center shrink-0 overflow-hidden shadow-lg shadow-purple-900/30">
+      <img 
+        src="/logo.png" 
+        alt="IPBITS AI" 
+        className="w-5 h-5 object-contain animate-pulse" 
+      />
+    </div>
+
+    {/* تەپک و کارتێ هزرکرنێ دگەل لۆگۆ یان ئایکۆنێ بریسکەدار */}
+    <div className="bg-slate-900/90 border border-slate-800 px-3.5 py-2.5 rounded-2xl text-xs text-purple-300 flex items-center gap-2 shadow-md">
+      {/* تەپک/ئایکۆنێ بچویک یێ لۆگۆی ب ئەنیمەیشنا لەرزین و بریسکانێ */}
+      <span className="relative flex h-2.5 w-2.5">
+        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-purple-500"></span>
+      </span>
+      <span>{t.thinking}</span>
+    </div>
+  </div>
+)}
         <div ref={chatEndRef} />
       </main>
 

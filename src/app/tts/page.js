@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { 
   Volume2, Mic, FileText, Sparkles, AlertCircle, 
-  Download, Loader2, ArrowRight, UploadCloud, Radio 
+  Download, Loader2, ArrowRight, UploadCloud, Radio, KeyRound, CheckCircle2 
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -19,6 +19,10 @@ const VOICES = [
 ];
 
 export default function VoiceHubPage() {
+  const [redeemCode, setRedeemCode] = useState('');
+  const [redeemLoading, setRedeemLoading] = useState(false);
+  const [redeemMsg, setRedeemMsg] = useState({ text: '', type: '' });
+
   const [activeTab, setActiveTab] = useState('tts'); // 'tts' | 'sts' | 'stt' | 'sfx'
   const [text, setText] = useState('');
   const [selectedVoice, setSelectedVoice] = useState(VOICES[0].id);
@@ -45,6 +49,38 @@ export default function VoiceHubPage() {
     }
     fetchUserData();
   }, []);
+
+  // فەنکشنا پشکنین و زێدەکرنا کلیلێن کارتی
+  const handleRedeem = async () => {
+    if (!redeemCode.trim()) return;
+    setRedeemLoading(true);
+    setRedeemMsg({ text: '', type: '' });
+
+    if (!user) {
+      setRedeemMsg({ text: 'تکایە پێشتر لۆگین بە.', type: 'error' });
+      setRedeemLoading(false);
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/redeem', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: redeemCode, userId: user.id }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      setRedeemMsg({ text: data.message, type: 'success' });
+      setCharsLeft(data.newTotal);
+      setRedeemCode('');
+    } catch (err) {
+      setRedeemMsg({ text: err.message, type: 'error' });
+    } finally {
+      setRedeemLoading(false);
+    }
+  };
 
   const handleProcess = async () => {
     setLoading(true);
@@ -133,12 +169,42 @@ export default function VoiceHubPage() {
             </div>
             <div>
               <h1 className="text-xl font-bold">دەنگ و زیرەکییا دەستکرد (AI Voice Studio)</h1>
-              <p className="text-xs text-zinc-400">هەمى خزمەتگوزاریێن دەنگی ل ئێک جهـ</p>
+              <p className="text-xs text-zinc-400">هەموو خزمەتگوزاریێن دەنگی ل ئێک جهـ</p>
             </div>
           </div>
           {charsLeft !== null && (
             <div className="bg-zinc-800/90 border border-zinc-700/60 px-3 py-1.5 rounded-full text-xs font-medium text-purple-300">
-              پیتێن ماین: <span className="text-white font-bold">{charsLeft}</span>
+              پیتێن ماین: <span className="text-white font-bold">{charsLeft.toLocaleString()}</span>
+            </div>
+          )}
+        </div>
+
+        {/* بەشێ داخیلکرنا کلیلا کارتی (Redeem Card) */}
+        <div className="bg-zinc-950/50 border border-zinc-800/80 p-3.5 rounded-2xl space-y-2">
+          <div className="flex items-center gap-2 mb-1">
+            <KeyRound className="w-3.5 h-3.5 text-purple-400" />
+            <span className="text-xs font-semibold text-zinc-300">کاراکرنا کلیلا باڵانسی (Redeem Code)</span>
+          </div>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              placeholder="کۆدێ کلیلێ لێبدە (بۆ نموونە: VOICE-50K-B741)"
+              value={redeemCode}
+              onChange={(e) => setRedeemCode(e.target.value)}
+              className="flex-1 bg-zinc-800/80 border border-zinc-700/70 rounded-xl px-3 py-2 text-xs text-white placeholder-zinc-500 outline-none focus:border-purple-500 uppercase tracking-wider"
+            />
+            <button
+              onClick={handleRedeem}
+              disabled={redeemLoading || !redeemCode.trim()}
+              className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center justify-center min-w-[80px]"
+            >
+              {redeemLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'کاراکرن'}
+            </button>
+          </div>
+          {redeemMsg.text && (
+            <div className={`flex items-center gap-1.5 text-[11px] font-medium pt-1 ${redeemMsg.type === 'success' ? 'text-emerald-400' : 'text-rose-400'}`}>
+              {redeemMsg.type === 'success' ? <CheckCircle2 className="w-3.5 h-3.5 flex-shrink-0" /> : <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />}
+              <span>{redeemMsg.text}</span>
             </div>
           )}
         </div>

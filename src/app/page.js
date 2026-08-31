@@ -2,9 +2,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   ShoppingBag, CheckCircle2, Trash2, Send, 
-  ShieldCheck, MessageCircle, Copy, Check, Flame, UploadCloud, X, RefreshCw, Lock, Zap, Clock
+  ShieldCheck, MessageCircle, Copy, Check, Flame, UploadCloud, X, RefreshCw, Lock, Zap, Clock,
+  Globe, ChevronDown
 } from 'lucide-react';
-
 const TRANSLATIONS = {
   ku: {
     dir: 'rtl',
@@ -196,6 +196,7 @@ const PAYMENT_ACCOUNTS = {
 
 export default function StorePage() {
   const [lang, setLang] = useState('ku');
+  const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const t = TRANSLATIONS[lang];
 
   const [selectedTierId, setSelectedTierId] = useState('30_days');
@@ -381,50 +382,76 @@ export default function StorePage() {
           </div>
 
           {/* زمان و سەبەتە */}
-          <div className="flex items-center gap-1.5 shrink-0">
-            <div className="flex items-center bg-slate-900 border border-slate-800 rounded-lg p-0.5 text-xs font-bold">
+          <div className="flex items-center gap-2 shrink-0">
+            
+            {/* مینیویا بچووک یا زمانان */}
+            <div className="relative">
               <button
                 type="button"
-                onClick={() => setLang('ku')}
-                className={`px-2 py-1 rounded transition-all ${
-                  lang === 'ku' ? 'bg-purple-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
-                }`}
+                onClick={() => setLangDropdownOpen(!langDropdownOpen)}
+                className="flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm"
               >
-                کو
+                <Globe size={14} className="text-purple-400" />
+                <span>{lang === 'ku' ? 'کوردی' : lang === 'ar' ? 'العربية' : 'English'}</span>
+                <ChevronDown size={12} className={`text-slate-400 transition-transform duration-200 ${langDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
-              <button
-                type="button"
-                onClick={() => setLang('ar')}
-                className={`px-2 py-1 rounded transition-all ${
-                  lang === 'ar' ? 'bg-purple-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                عر
-              </button>
-              <button
-                type="button"
-                onClick={() => setLang('en')}
-                className={`px-2 py-1 rounded transition-all ${
-                  lang === 'en' ? 'bg-purple-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                EN
-              </button>
+
+              {langDropdownOpen && (
+                <div 
+                  className={`absolute top-full mt-1.5 bg-[#0c1022] border border-slate-800 rounded-xl shadow-2xl p-1 z-50 flex flex-col gap-0.5 min-w-[110px] backdrop-blur-xl ${
+                    t.dir === 'rtl' ? 'right-0' : 'left-0'
+                  }`}
+                >
+                  <button
+                    type="button"
+                    onClick={() => { setLang('ku'); setLangDropdownOpen(false); }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
+                      lang === 'ku' ? 'bg-purple-600/30 text-purple-300' : 'text-slate-300 hover:bg-slate-900 hover:text-white'
+                    } ${t.dir === 'rtl' ? 'text-right' : 'text-left'}`}
+                  >
+                    <span>کوردی</span>
+                    {lang === 'ku' && <Check size={12} className="text-purple-400" />}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => { setLang('ar'); setLangDropdownOpen(false); }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
+                      lang === 'ar' ? 'bg-purple-600/30 text-purple-300' : 'text-slate-300 hover:bg-slate-900 hover:text-white'
+                    } ${t.dir === 'rtl' ? 'text-right' : 'text-left'}`}
+                  >
+                    <span>العربية</span>
+                    {lang === 'ar' && <Check size={12} className="text-purple-400" />}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => { setLang('en'); setLangDropdownOpen(false); }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
+                      lang === 'en' ? 'bg-purple-600/30 text-purple-300' : 'text-slate-300 hover:bg-slate-900 hover:text-white'
+                    } ${t.dir === 'rtl' ? 'text-right' : 'text-left'}`}
+                  >
+                    <span>English</span>
+                    {lang === 'en' && <Check size={12} className="text-purple-400" />}
+                  </button>
+                </div>
+              )}
             </div>
 
+            {/* سەبەتە */}
             <button 
               type="button"
               onClick={scrollToCart}
-              className="flex items-center gap-1 bg-purple-600/20 border border-purple-500/40 text-purple-300 px-2.5 py-1.5 rounded-lg text-xs font-bold shrink-0 cursor-pointer"
+              className="flex items-center gap-1.5 bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/40 text-purple-300 px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 cursor-pointer transition-all"
             >
               <ShoppingBag size={14} className="text-purple-400" />
               <span>{cart.length}</span>
             </button>
+
           </div>
 
         </div>
       </nav>
-
       {/* ناڤەرۆکا سەرەکی */}
       <main className="max-w-6xl mx-auto px-4 sm:px-6 mt-6 sm:mt-10 mb-16 flex-1">
         

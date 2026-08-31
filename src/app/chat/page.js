@@ -4,7 +4,6 @@ import {
   Send, Bot, User, Sparkles, Loader2, Image as ImageIcon, 
   X, Paperclip, Check, Copy, Download, Code2, Globe, ChevronDown, Wallet, KeyRound
 } from 'lucide-react';
-import UserBalanceCard from '@/components/UserBalanceCard';
 
 const TRANSLATIONS = {
   ku: {

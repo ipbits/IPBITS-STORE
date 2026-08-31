@@ -147,6 +147,79 @@ function CodeBlock({ code, language }) {
   );
 }
 
+function UserBalanceCard({ apiKey }) {
+  const [keyData, setKeyData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!apiKey) return;
+    fetch('https://openrouter.ai/api/v1/auth/key', {
+      headers: { 'Authorization': `Bearer ${apiKey}` }
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.data) setKeyData(data.data);
+      })
+      .catch(err => console.error("Error fetching balance:", err))
+      .finally(() => setLoading(false));
+  }, [apiKey]);
+
+  if (loading) {
+    return (
+      <div className="bg-slate-900/60 border border-slate-800 p-3 rounded-xl animate-pulse text-xs text-slate-400 text-center">
+        بارکرنا باڵانسی...
+      </div>
+    );
+  }
+
+  if (!keyData) return null;
+
+  const totalLimit = keyData.limit || 0;
+  const usedAmount = keyData.usage || 0;
+  const remainingAmount = keyData.limit_remaining !== null ? keyData.limit_remaining : (totalLimit - usedAmount);
+  const percentUsed = totalLimit > 0 ? Math.min(100, Math.round((usedAmount / totalLimit) * 100)) : 0;
+
+  return (
+    <div className="w-full bg-[#0c1022]/90 border border-purple-500/30 rounded-2xl p-4 shadow-xl backdrop-blur-md mb-2">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 bg-purple-600/20 border border-purple-500/40 rounded-lg flex items-center justify-center">
+            <Wallet className="text-purple-400" size={14} />
+          </div>
+          <div>
+            <h4 className="text-xs font-bold text-white">باڵانس و لیمێتا ئەکاونتی</h4>
+          </div>
+        </div>
+        <span className="text-[10px] font-black px-2 py-0.5 rounded bg-purple-950/60 border border-purple-500/40 text-purple-300">
+          مەزێختن: {percentUsed}%
+        </span>
+      </div>
+
+      <div className="grid grid-cols-3 gap-2 mb-3 text-center">
+        <div className="bg-slate-950/60 border border-slate-800 p-2 rounded-xl">
+          <span className="text-[10px] text-slate-400 block">لیمێت</span>
+          <span className="text-xs font-black text-white">${totalLimit.toFixed(2)}</span>
+        </div>
+        <div className="bg-slate-950/60 border border-slate-800 p-2 rounded-xl">
+          <span className="text-[10px] text-rose-400 block">مەزێختی</span>
+          <span className="text-xs font-black text-rose-400">${usedAmount.toFixed(2)}</span>
+        </div>
+        <div className="bg-slate-950/60 border border-purple-500/30 p-2 rounded-xl bg-purple-950/20">
+          <span className="text-[10px] text-emerald-400 block">یێ مای</span>
+          <span className="text-xs font-black text-emerald-400">${remainingAmount.toFixed(2)}</span>
+        </div>
+      </div>
+
+      <div className="w-full bg-slate-950 rounded-full h-1.5 overflow-hidden border border-slate-800">
+        <div 
+          className="bg-gradient-to-r from-purple-500 to-emerald-400 h-full transition-all duration-500"
+          style={{ width: `${percentUsed}%` }}
+        />
+      </div>
+    </div>
+  );
+}
+
 function renderMessageContent(content) {
   if (typeof content !== 'string') return content;
   const parts = content.split(/(```[\s\S]*?```)/g);

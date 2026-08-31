@@ -349,16 +349,21 @@ export default function StorePage() {
       <nav className="w-full border-b border-slate-800 bg-[#0c1022]/95 backdrop-blur-xl sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-3 sm:px-6 h-16 flex items-center justify-between gap-2">
           
-          {/* لۆگۆ و ناڤ */}
-          <div className="flex items-center gap-2 shrink-0">
+          {/* لۆگۆ و ناڤ دگەل نڤیسینا ژێر ناڤی */}
+          <div className="flex items-center gap-2.5 shrink-0">
             <img 
               src="/logo.png" 
               alt="IPBITS Logo" 
               className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl object-cover border border-purple-500/40 shrink-0 block" 
             />
-            <span className="text-sm sm:text-lg font-black tracking-wide bg-gradient-to-r from-purple-400 to-indigo-300 bg-clip-text text-transparent">
-              IPBITS STORE
-            </span>
+            <div className="flex flex-col justify-center">
+              <span className="text-sm sm:text-lg font-black tracking-wide bg-gradient-to-r from-purple-400 to-indigo-300 bg-clip-text text-transparent leading-tight">
+                IPBITS STORE
+              </span>
+              <span className="text-[10px] sm:text-xs text-slate-400 font-medium leading-tight mt-0.5">
+                {t.storeSubtitle}
+              </span>
+            </div>
           </div>
 
           {/* زمان و سەبەتە */}

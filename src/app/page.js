@@ -455,15 +455,25 @@ export default function StorePage() {
       {/* ناڤەرۆکا سەرەکی */}
       <main className="max-w-6xl mx-auto px-4 sm:px-6 mt-6 sm:mt-10 mb-16 flex-1">
         
-        {/* سەردێڕێ پاقژ دگەل لۆگۆیێ تە یێ فەرمی د باجێ دا */}
+        {/* سەردێڕێ پاقژ */}
         <div ref={productsSectionRef} className="text-center max-w-3xl mx-auto mb-8 sm:mb-10">
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-950/80 via-fuchsia-950/80 to-indigo-950/80 text-purple-300 px-3.5 py-1.5 rounded-full text-[11px] sm:text-xs font-black mb-4 border border-purple-500/40 shadow-xl shadow-purple-900/30">
-            <img 
-              src="/logo.png" 
-              alt="IPBITS" 
-              className="w-4 h-4 rounded-md object-cover border border-purple-400/50 shrink-0" 
-            />
-            <span>{t.heroBadge}</span>
+          
+          {/* 👈 ئەڤە جهێ باجێ ئەنیمەیشندارە */}
+          <div className="relative inline-flex items-center gap-2 px-4 py-2 rounded-full border border-purple-500/50 bg-slate-950/80 backdrop-blur-xl shadow-xl shadow-purple-950/50 mb-5 group overflow-hidden transition-all duration-300 hover:border-purple-400 hover:scale-105">
+            <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-purple-500/20 to-transparent pointer-events-none" />
+            
+            <div className="relative flex items-center justify-center">
+              <span className="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-purple-500 to-indigo-500 opacity-60 blur-sm animate-pulse" />
+              <img 
+                src="/logo.png" 
+                alt="IPBITS" 
+                className="relative w-5 h-5 rounded-lg object-cover border border-purple-400/60 shadow-md transform transition-transform duration-500 group-hover:rotate-12 group-hover:scale-110" 
+              />
+            </div>
+            
+            <span className="text-xs sm:text-sm font-black bg-gradient-to-r from-purple-200 via-pink-200 to-indigo-200 bg-clip-text text-transparent tracking-wide">
+              {t.heroBadge}
+            </span>
           </div>
           
           <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-white mb-2 leading-tight">

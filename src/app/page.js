@@ -505,7 +505,8 @@ export default function StorePage() {
                 </span>
               </div>
 
-              <h3 className="font-black text-xl sm:text-2xl text-white mb-2">
+              {/* سەردێڕێ کارتا سەرەکی ب ڕەنگێ موورێ درەوشاوە */}
+              <h3 className="font-black text-xl sm:text-2xl mb-2 bg-gradient-to-r from-purple-400 via-fuchsia-400 to-indigo-300 bg-clip-text text-transparent leading-snug">
                 {t.mainOfferTitle}
               </h3>
 

@@ -1,22 +1,23 @@
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
 import { 
-  ShoppingBag, CheckCircle2, Trash2, Sparkles, Send, 
+  ShoppingBag, CheckCircle2, Trash2, Send, 
   ShieldCheck, MessageCircle, Copy, Check, Flame, UploadCloud, X, RefreshCw, Lock, Zap, Clock
 } from 'lucide-react';
 
 const TRANSLATIONS = {
   ku: {
     dir: 'rtl',
+    currency: 'IQD',
     storeSubtitle: 'باشترین خزمەتگوزاریێن دیجیتال و ژیرییا دەستکرد',
-    heroBadge: 'ئۆفەرا کاتی: پتر ژ ٢٠٠ مۆدێلێن AI 🔥',
+    heroBadge: 'ئۆفەرا تایبەت: پتر ژ ٢٠٠ مۆدێلێن AI 🔥',
     heroTitle1: 'هەمی ژیریێن دەستکرد',
     heroTitle2: 'د ئێک ئەکاونت دا',
-    heroDesc: 'بێی پێدڤیبوون ب چەندین پشکدارییان؛ کارێن خۆ ب بەهێزترین مۆدێلان ئەنجام بدە.',
+    heroDesc: 'بێی پێدڤیبوون ب چەندین پشکدارییان؛ کارێن خۆ ب بهێزترین مۆدێلان ئەنجام بدە.',
     mainOfferBadge: 'ئۆفەرا سەرەکی یا VIP 👑',
     officialBadge: 'فەرمی و دەستبەجێ',
     mainOfferTitle: 'پاکێجا گشتگیر: هەمی مۆدێلێن AI د ئێک ئەکاونت دا',
-    mainOfferDesc: 'دەستڤەئینانا راستەوخۆ بۆ بەهێزترین ژیریێن دەستکرد (Claude 3.5, ChatGPT 4o, Gemini, DeepSeek) بێی سنوردارکرن.',
+    mainOfferDesc: 'دەستڤەئینانا راستەوخۆ بۆ بهێزترین ژیریێن دەستکرد (Claude 3.5, ChatGPT 4o, Gemini, DeepSeek) بێی سنوردارکرن.',
     selectDuration: 'دەمی هەلبژێرە:',
     selectedPriceFor: 'بهایێ پاکێجا هەلبژارتی',
     addToCartBtn: 'دەستڤەئینان:',
@@ -58,8 +59,9 @@ const TRANSLATIONS = {
   },
   ar: {
     dir: 'rtl',
+    currency: 'IQD',
     storeSubtitle: 'أفضل الخدمات الرقمية والذكاء الاصطناعي',
-    heroBadge: 'عرض حصري: أكثر من ٢٠٠ نموذج AI 🔥',
+    heroBadge: 'عرض خاص: أكثر من ٢٠٠ نموذج AI 🔥',
     heroTitle1: 'جميع أدوات الذكاء الاصطناعي',
     heroTitle2: 'في حساب واحد',
     heroDesc: 'دون الحاجة لاشتراكات متعددة؛ أنجز جميع مهامك بأقوى النماذج العالمية.',
@@ -108,8 +110,9 @@ const TRANSLATIONS = {
   },
   en: {
     dir: 'ltr',
+    currency: 'USD',
     storeSubtitle: 'Premium Digital & Artificial Intelligence Services',
-    heroBadge: 'Limited Offer: Over 200+ AI Models 🔥',
+    heroBadge: 'Special Offer: Over 200+ AI Models 🔥',
     heroTitle1: 'All Top AI Models',
     heroTitle2: 'In One Account',
     heroDesc: 'No need for multiple subscriptions; power all your workflows with elite AI.',
@@ -159,35 +162,34 @@ const TRANSLATIONS = {
 };
 
 const AI_TIERS_DATA = [
-  { id: '1_day', priceIQD: 2500, oldPriceIQD: 5000 },
-  { id: '7_days', priceIQD: 5000, oldPriceIQD: 10000 },
-  { id: '30_days', priceIQD: 12000, oldPriceIQD: 25000 },
-  { id: '90_days', priceIQD: 25000, oldPriceIQD: 50000 },
-  { id: '1_year', priceIQD: 50000, oldPriceIQD: 120000 }
+  { id: '1_day', priceIQD: 2500, oldPriceIQD: 5000, priceUSD: 1.70, oldPriceUSD: 3.50 },
+  { id: '7_days', priceIQD: 5000, oldPriceIQD: 10000, priceUSD: 3.50, oldPriceUSD: 7.00 },
+  { id: '30_days', priceIQD: 12000, oldPriceIQD: 25000, priceUSD: 8.00, oldPriceUSD: 17.00 },
+  { id: '90_days', priceIQD: 25000, oldPriceIQD: 50000, priceUSD: 17.00, oldPriceUSD: 35.00 },
+  { id: '1_year', priceIQD: 50000, oldPriceIQD: 120000, priceUSD: 35.00, oldPriceUSD: 80.00 }
 ];
 
 const LOCKED_PRODUCTS = [
-  { id: 'chatgpt', name: 'ChatGPT Plus (GPT-4o)', priceIQD: 35000, category: 'AI Assistant' },
-  { id: 'claude', name: 'Claude Pro (Claude 3.5 Sonnet)', priceIQD: 35000, category: 'AI Assistant' },
-  { id: 'google_flow', name: 'Google Flow AI', priceIQD: 25000, category: 'AI Assistant' },
-  { id: 'elevenlabs', name: 'ElevenLabs AI', priceIQD: 26250, category: 'AI Voice' },
-  { id: 'kling', name: 'Kling AI Video', priceIQD: 21000, category: 'AI Video' },
-  { id: 'canva', name: 'Canva Pro', priceIQD: 8750, category: 'Design' },
-  { id: 'capcut', name: 'CapCut Pro', priceIQD: 15000, category: 'Video Editing' },
-  { id: 'paypal_acc', name: 'PayPal Verified Account', priceIQD: 20000, category: 'Financial Service' },
-  { id: 'netflix', name: 'Netflix Premium', priceIQD: 7000, category: 'Cinema & Movies' },
-  { id: 'shahid_vip', name: 'Shahid VIP', priceIQD: 13500, category: 'Cinema & Movies' },
-  { id: 'spotify', name: 'Spotify Premium', priceIQD: 13000, category: 'Music & Audio' },
-  { id: 'apple_music', name: 'Apple Music', priceIQD: 7000, category: 'Music & Audio' },
-  { id: 'youtube_music', name: 'YouTube Premium', priceIQD: 13000, category: 'Music & Audio' },
-  { id: 'ps_plus', name: 'PlayStation Plus', priceIQD: 22000, category: 'Gaming' }
+  { id: 'chatgpt', name: 'ChatGPT Plus (GPT-4o)', priceIQD: 35000, priceUSD: 24.00, category: 'AI Assistant' },
+  { id: 'claude', name: 'Claude Pro (Claude 3.5 Sonnet)', priceIQD: 35000, priceUSD: 24.00, category: 'AI Assistant' },
+  { id: 'google_flow', name: 'Google Flow AI', priceIQD: 25000, priceUSD: 17.00, category: 'AI Assistant' },
+  { id: 'elevenlabs', name: 'ElevenLabs AI', priceIQD: 26250, priceUSD: 18.00, category: 'AI Voice' },
+  { id: 'kling', name: 'Kling AI Video', priceIQD: 21000, priceUSD: 14.50, category: 'AI Video' },
+  { id: 'canva', name: 'Canva Pro', priceIQD: 8750, priceUSD: 6.00, category: 'Design' },
+  { id: 'capcut', name: 'CapCut Pro', priceIQD: 15000, priceUSD: 10.50, category: 'Video Editing' },
+  { id: 'paypal_acc', name: 'PayPal Verified Account', priceIQD: 20000, priceUSD: 14.00, category: 'Financial Service' },
+  { id: 'netflix', name: 'Netflix Premium', priceIQD: 7000, priceUSD: 5.00, category: 'Cinema & Movies' },
+  { id: 'shahid_vip', name: 'Shahid VIP', priceIQD: 13500, priceUSD: 9.50, category: 'Cinema & Movies' },
+  { id: 'spotify', name: 'Spotify Premium', priceIQD: 13000, priceUSD: 9.00, category: 'Music & Audio' },
+  { id: 'apple_music', name: 'Apple Music', priceIQD: 7000, priceUSD: 5.00, category: 'Music & Audio' },
+  { id: 'youtube_music', name: 'YouTube Premium', priceIQD: 13000, priceUSD: 9.00, category: 'Music & Audio' },
+  { id: 'ps_plus', name: 'PlayStation Plus', priceIQD: 22000, priceUSD: 15.00, category: 'Gaming' }
 ];
 
 const PAYMENT_ACCOUNTS = {
-  FIB: { title: 'First Iraqi Bank (FIB)', number: '07504060378', note: 'FIB Bank Account' },
+  FIB: { title: 'First Iraqi Bank (FIB)', number: '07504060378', note: 'Account / FIB: IPBITS' },
   FastPay: { title: 'FastPay Wallet', number: '07504060378', note: 'FastPay Account' },
   ZainCash: { title: 'Zain Cash', number: '07504060378', note: 'Zain Cash Wallet' },
-  QiCard: { title: 'Qi Card', number: '07504060378', note: 'Qi Services / Card Account' },
   PayPal: { title: 'PayPal', number: 'https://www.paypal.com/ncp/payment/VDDES8YRYJG46', note: 'Send via Friends & Family' },
   USDT: { title: 'USDT (TRC20)', number: 'TUeqkjzFdD7b1EtnAJL9tbzB1uN8wDbU6T', note: 'TRC20 Network Only' }
 };
@@ -223,6 +225,13 @@ export default function StorePage() {
   const currentTierData = AI_TIERS_DATA.find(tItem => tItem.id === selectedTierId) || AI_TIERS_DATA[2];
   const currentTierText = t.tiers[selectedTierId];
 
+  const formatPrice = (iqd, usd) => {
+    if (lang === 'en') {
+      return `$${usd.toFixed(2)}`;
+    }
+    return `${iqd.toLocaleString()} IQD`;
+  };
+
   const scrollToCart = () => {
     if (cartSectionRef.current) {
       cartSectionRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -249,7 +258,8 @@ export default function StorePage() {
     const item = {
       id: `ai_bundle_${selectedTierId}`,
       name: `AI Hub - ${currentTierText.name}`,
-      priceIQD: currentTierData.priceIQD
+      priceIQD: currentTierData.priceIQD,
+      priceUSD: currentTierData.priceUSD
     };
     const filteredCart = cart.filter(i => !i.id.startsWith('ai_bundle_'));
     setCart([...filteredCart, item]);
@@ -261,6 +271,7 @@ export default function StorePage() {
   };
 
   const totalIQD = cart.reduce((acc, curr) => acc + curr.priceIQD, 0);
+  const totalUSD = cart.reduce((acc, curr) => acc + (curr.priceUSD || 0), 0);
 
   const copyPaymentNumber = () => {
     const accNum = PAYMENT_ACCOUNTS[formData.paymentMethod]?.number || '';
@@ -303,10 +314,13 @@ export default function StorePage() {
     }
 
     setLoading(true);
+    const formattedTotal = lang === 'en' ? `$${totalUSD.toFixed(2)}` : `${totalIQD.toLocaleString()} IQD`;
     const orderDetails = {
       ...formData,
       items: cart.map(i => i.name).join(', '),
+      total: formattedTotal,
       totalIQD,
+      totalUSD,
       image: fileBase64 ? { base64: fileBase64, type: fileType } : null
     };
 
@@ -336,7 +350,7 @@ export default function StorePage() {
 
   const sendToWhatsApp = () => {
     if (!lastOrder) return;
-    const msg = `Hello IPBITS STORE,%0A%0A👤 Name: ${lastOrder.name}%0A📱 Phone: ${lastOrder.phone}%0A📦 Plan: ${lastOrder.items}%0A💰 Total: ${lastOrder.totalIQD.toLocaleString()} IQD%0A💳 Method: ${lastOrder.paymentMethod}%0A🧾 TxID: ${lastOrder.transactionId}`;
+    const msg = `Hello IPBITS STORE,%0A%0A👤 Name: ${lastOrder.name}%0A📱 Phone: ${lastOrder.phone}%0A📦 Plan: ${lastOrder.items}%0A💰 Total: ${lastOrder.total}%0A💳 Method: ${lastOrder.paymentMethod}%0A🧾 TxID: ${lastOrder.transactionId}`;
     window.open(`https://wa.me/9647504060378?text=${msg}`, '_blank');
   };
 
@@ -345,11 +359,11 @@ export default function StorePage() {
   return (
     <div className="min-h-screen bg-[#070913] text-slate-100 font-sans selection:bg-purple-600 selection:text-white flex flex-col justify-between" dir={t.dir}>
       
-      {/* هێدەرێ ستاندارد یێ مۆبایل و دێسکتۆپێ */}
-      <nav className="w-full border-b border-slate-800 bg-[#0c1022]/95 backdrop-blur-xl sticky top-0 z-50">
+      {/* هێدەرێ ستاندارد یێ مۆبایل و دێسکتۆپێ دگەل نڤیسینا لاوەکی */}
+      <nav className="w-full border-b border-slate-800/80 bg-[#0c1022]/95 backdrop-blur-xl sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-3 sm:px-6 h-16 flex items-center justify-between gap-2">
           
-          {/* لۆگۆ و ناڤ دگەل نڤیسینا ژێر ناڤی */}
+          {/* لۆگۆ + ناڤ + نڤیسینا لاوەکی */}
           <div className="flex items-center gap-2.5 shrink-0">
             <img 
               src="/logo.png" 
@@ -376,7 +390,7 @@ export default function StorePage() {
                   lang === 'ku' ? 'bg-purple-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
                 }`}
               >
-                کوردى
+                کو
               </button>
               <button
                 type="button"
@@ -385,7 +399,7 @@ export default function StorePage() {
                   lang === 'ar' ? 'bg-purple-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
                 }`}
               >
-                عربي
+                عر
               </button>
               <button
                 type="button"
@@ -414,21 +428,25 @@ export default function StorePage() {
       {/* ناڤەرۆکا سەرەکی */}
       <main className="max-w-6xl mx-auto px-4 sm:px-6 mt-6 sm:mt-10 mb-16 flex-1">
         
-        {/* سەردێڕ */}
-        <div ref={productsSectionRef} className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-950/80 via-fuchsia-950/80 to-indigo-950/80 text-purple-300 px-4 py-1.5 sm:px-5 sm:py-2 rounded-full text-[11px] sm:text-xs font-black mb-4 border border-purple-500/40 shadow-xl shadow-purple-900/30 animate-pulse">
-            <Sparkles className="text-amber-400" size={14} />
+        {/* سەردێڕێ پاقژ دگەل لۆگۆیێ تە یێ فەرمی د باجێ دا */}
+        <div ref={productsSectionRef} className="text-center max-w-3xl mx-auto mb-8 sm:mb-10">
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-950/80 via-fuchsia-950/80 to-indigo-950/80 text-purple-300 px-3.5 py-1.5 rounded-full text-[11px] sm:text-xs font-black mb-4 border border-purple-500/40 shadow-xl shadow-purple-900/30">
+            <img 
+              src="/logo.png" 
+              alt="IPBITS" 
+              className="w-4 h-4 rounded-md object-cover border border-purple-400/50 shrink-0" 
+            />
             <span>{t.heroBadge}</span>
           </div>
           
-          <h2 className="text-2xl sm:text-5xl font-black tracking-tight text-white mb-3 leading-tight">
+          <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-white mb-2 leading-tight">
             {t.heroTitle1} <br className="hidden sm:inline"/> 
             <span className="bg-gradient-to-r from-purple-400 via-fuchsia-400 to-indigo-400 bg-clip-text text-transparent">
               {t.heroTitle2}
             </span>
           </h2>
           
-          <p className="text-slate-400 text-xs sm:text-base leading-relaxed max-w-xl mx-auto font-normal">
+          <p className="text-slate-400 text-xs sm:text-sm leading-relaxed max-w-lg mx-auto font-normal">
             {t.heroDesc}
           </p>
         </div>
@@ -450,7 +468,7 @@ export default function StorePage() {
                 </span>
               </div>
 
-              <h3 className="font-black text-xl sm:text-3xl text-white mb-2">
+              <h3 className="font-black text-xl sm:text-2xl text-white mb-2">
                 {t.mainOfferTitle}
               </h3>
 
@@ -486,10 +504,10 @@ export default function StorePage() {
                         </div>
                         <div>
                           <span className="text-xs sm:text-sm font-black text-white block">
-                            {tierData.priceIQD.toLocaleString()} IQD
+                            {formatPrice(tierData.priceIQD, tierData.priceUSD)}
                           </span>
                           <span className="text-[10px] text-slate-400 line-through">
-                            {tierData.oldPriceIQD.toLocaleString()} IQD
+                            {formatPrice(tierData.oldPriceIQD, tierData.oldPriceUSD)}
                           </span>
                         </div>
                       </button>
@@ -504,10 +522,10 @@ export default function StorePage() {
                   <span className="text-xs text-slate-400 block">{t.selectedPriceFor} ({currentTierText.duration}):</span>
                   <div className="flex items-baseline gap-2 mt-0.5">
                     <span className="text-2xl sm:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-indigo-200">
-                      {currentTierData.priceIQD.toLocaleString()} IQD
+                      {formatPrice(currentTierData.priceIQD, currentTierData.priceUSD)}
                     </span>
                     <span className="text-xs text-slate-500 line-through">
-                      {currentTierData.oldPriceIQD.toLocaleString()} IQD
+                      {formatPrice(currentTierData.oldPriceIQD, currentTierData.oldPriceUSD)}
                     </span>
                   </div>
                 </div>
@@ -529,7 +547,7 @@ export default function StorePage() {
                 ) : (
                   <>
                     <Zap className="text-amber-300 fill-amber-300" size={16} />
-                    <span>{t.addToCartBtn} {currentTierText.name} - {currentTierData.priceIQD.toLocaleString()} IQD</span>
+                    <span>{t.addToCartBtn} {currentTierText.name} - {formatPrice(currentTierData.priceIQD, currentTierData.priceUSD)}</span>
                   </>
                 )}
               </button>
@@ -550,7 +568,9 @@ export default function StorePage() {
                       <span className="text-[11px] text-slate-400">{product.category}</span>
                     </div>
                     <h3 className="font-bold text-white text-sm sm:text-base mb-1">{product.name}</h3>
-                    <span className="text-base sm:text-lg font-bold text-slate-500 block mb-3">{product.priceIQD.toLocaleString()} IQD</span>
+                    <span className="text-base sm:text-lg font-bold text-slate-500 block mb-3">
+                      {formatPrice(product.priceIQD, product.priceUSD)}
+                    </span>
                   </div>
 
                   <button
@@ -614,7 +634,9 @@ export default function StorePage() {
                       <div key={item.id} className="flex justify-between items-center bg-slate-950/70 p-2.5 rounded-xl border border-purple-500/30 text-xs">
                         <span className="font-bold text-slate-200 truncate max-w-[150px]">{item.name}</span>
                         <div className="flex items-center gap-2">
-                          <span className="text-purple-400 font-bold">{item.priceIQD.toLocaleString()} IQD</span>
+                          <span className="text-purple-400 font-bold">
+                            {formatPrice(item.priceIQD, item.priceUSD || 0)}
+                          </span>
                           <button onClick={() => removeFromCart(item.id)} className="text-slate-500 hover:text-rose-400 transition-colors">
                             <Trash2 size={13} />
                           </button>
@@ -627,7 +649,9 @@ export default function StorePage() {
                 <div className="bg-slate-950/90 p-3.5 rounded-xl sm:rounded-2xl border border-slate-800/80 mb-4">
                   <div className="flex justify-between text-sm sm:text-base font-extrabold text-white">
                     <span>{t.totalPrice}</span>
-                    <span className="text-purple-400 font-black">{totalIQD.toLocaleString()} IQD</span>
+                    <span className="text-purple-400 font-black">
+                      {lang === 'en' ? `$${totalUSD.toFixed(2)}` : `${totalIQD.toLocaleString()} IQD`}
+                    </span>
                   </div>
                 </div>
 
@@ -668,7 +692,6 @@ export default function StorePage() {
                       <option value="ZainCash">Zain Cash</option>
                       <option value="PayPal">PayPal</option>
                       <option value="USDT">USDT (TRC20 Crypto)</option>
-                      <option value="QiCard">Qi Card</option>
                     </select>
 
                     <div className="mt-2 bg-purple-950/40 border border-purple-800/40 rounded-xl p-2.5 flex items-center justify-between text-xs">
@@ -744,28 +767,10 @@ export default function StorePage() {
         </div>
       </main>
 
-      {/* فۆتەر */}
-      <footer className="w-full border-t border-slate-800/80 bg-[#0c1022]/90 backdrop-blur-md py-6 px-4 sm:px-6">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400">
-          
-          <div className="flex items-center gap-2 text-[11px] sm:text-xs">
-            <span>© 2026 IPBITS STORE. {t.allRightsReserved}</span>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <a 
-              href="https://instagram.com/ipbits" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="flex items-center gap-1 bg-slate-900/80 hover:bg-purple-950/60 border border-purple-500/30 text-purple-300 px-3 py-1 rounded-lg text-xs font-bold transition-all shadow-sm"
-            >
-              <svg className="w-3.5 h-3.5 text-fuchsia-400 fill-current" viewBox="0 0 24 24">
-                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-              </svg>
-              <span>@ipbits</span>
-            </a>
-          </div>
-
+      {/* فۆتەر ب تەنێ مافێن پاراستی */}
+      <footer className="w-full border-t border-slate-800/80 bg-[#0c1022]/90 backdrop-blur-md py-6 px-4">
+        <div className="max-w-6xl mx-auto text-center text-xs text-slate-400">
+          <span>© 2026 IPBITS STORE. {t.allRightsReserved}</span>
         </div>
       </footer>
 

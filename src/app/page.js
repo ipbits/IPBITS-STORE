@@ -349,26 +349,17 @@ export default function StorePage() {
       <nav className="w-full border-b border-slate-800 bg-[#0c1022]/95 backdrop-blur-xl sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-3 sm:px-6 h-16 flex items-center justify-between gap-2">
           
-          {/* بەشێ لۆگۆی و ناڤی دگەل سەبتایتلی */}
-<div className="flex items-center gap-2.5">
-  <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-tr from-purple-600 to-indigo-500 rounded-xl flex items-center justify-center shadow-lg shadow-purple-900/30 shrink-0 p-1.5">
-    <img 
-      src="/logo.png" 
-      alt="IPBITS Logo" 
-      className="w-full h-full object-contain"
-    />
-  </div>
-
-  {/* ل ڤێرێ flex-col وەدکەت کو سەبتایتل ب درستی بکەڤیتە بن ناڤێ سەرەکی */}
-  <div className="flex flex-col text-right">
-    <span className="font-black text-sm sm:text-base tracking-wide bg-gradient-to-r from-white via-purple-100 to-purple-300 bg-clip-text text-transparent">
-      IPBITS STORE
-    </span>
-    <span className="text-[10px] sm:text-xs text-purple-300/80 font-medium leading-tight">
-      {t.storeSubtitle}
-    </span>
-  </div>
-</div>
+          {/* لۆگۆ و ناڤ */}
+          <div className="flex items-center gap-2 shrink-0">
+            <img 
+              src="/logo.png" 
+              alt="IPBITS Logo" 
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl object-cover border border-purple-500/40 shrink-0 block" 
+            />
+            <span className="text-sm sm:text-lg font-black tracking-wide bg-gradient-to-r from-purple-400 to-indigo-300 bg-clip-text text-transparent">
+              IPBITS STORE
+            </span>
+          </div>
 
           {/* زمان و سەبەتە */}
           <div className="flex items-center gap-1.5 shrink-0">

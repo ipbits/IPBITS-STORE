@@ -16,7 +16,9 @@ const TRANSLATIONS = {
     heroDesc: 'بێی پێدڤیبوون ب چەندین پشکدارییان؛ کارێن خۆ ب بهێزترین مۆدێلان ئەنجام بدە.',
     mainOfferBadge: 'ئۆفەرا سەرەکی یا VIP 👑',
     officialBadge: 'فەرمی و دەستبەجێ',
-    mainOfferTitle: 'پاکێجا گشتگیر: هەمی مۆدێلێن AI د ئێک ئەکاونت دا',
+   // ...
+    mainOfferTitle: 'پاکێجا گشتگیر یا ژیرییا دەستکرد', // 👈 ئێدی ناڤێ سەروژێر دووبارە نابیت
+    // ...
     mainOfferDesc: 'دەستڤەئینانا راستەوخۆ بۆ بهێزترین ژیریێن دەستکرد (Claude 3.5, ChatGPT 4o, Gemini, DeepSeek) بێی سنوردارکرن.',
     selectDuration: 'دەمی هەلبژێرە:',
     selectedPriceFor: 'بهایێ پاکێجا هەلبژارتی',
@@ -67,7 +69,9 @@ const TRANSLATIONS = {
     heroDesc: 'دون الحاجة لاشتراكات متعددة؛ أنجز جميع مهامك بأقوى النماذج العالمية.',
     mainOfferBadge: 'العرض الرئيسي VIP 👑',
     officialBadge: 'رسمي وفوري',
-    mainOfferTitle: 'الباقة الشاملة: جميع نماذج AI في حساب واحد',
+    // ...
+    mainOfferTitle: 'الباقة الشاملة للذكاء الاصطناعي',
+    // ...
     mainOfferDesc: 'وصول مباشر إلى أقوى نماذج الذكاء الاصطناعي (Claude 3.5, ChatGPT 4o, Gemini, DeepSeek) بلا حدود.',
     selectDuration: 'اختر المدة:',
     selectedPriceFor: 'سعر الباقة المختارة',
@@ -118,7 +122,9 @@ const TRANSLATIONS = {
     heroDesc: 'No need for multiple subscriptions; power all your workflows with elite AI.',
     mainOfferBadge: 'Featured VIP Offer 👑',
     officialBadge: 'Official & Instant',
-    mainOfferTitle: 'All-In-One Hub: Elite AI Models In One Account',
+    // ...
+    mainOfferTitle: 'All-In-One AI Pro Bundle',
+    // ..
     mainOfferDesc: 'Direct access to world-class AI models (Claude 3.5, ChatGPT 4o, Gemini, DeepSeek) without limits.',
     selectDuration: 'Select Plan:',
     selectedPriceFor: 'Selected Plan Price',

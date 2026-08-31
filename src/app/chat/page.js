@@ -2,14 +2,15 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
   Send, Bot, User, Sparkles, Loader2, Image as ImageIcon, 
-  X, Paperclip, Check, Copy, Download, Code2 
+  X, Paperclip, Check, Copy, Download, Code2, Globe, ChevronDown, Wallet, KeyRound
 } from 'lucide-react';
+import UserBalanceCard from '@/components/UserBalanceCard';
 
 const TRANSLATIONS = {
   ku: {
     welcome: 'سڵاڤ! ئەڤە پلاتفۆڕما IPBITS AI Hubە. پتر ژ ٢٠٠ مۆدێلێن جیهانی ل بەر دەستێ تەنە. هەر پرسیارەکا تە هەبیت بنڤیسە دا هاریکاریا تە بکەم.',
     inputPlaceholder: 'پرسیارەکێ بنڤیسە...',
-    loadingModels: 'بارکرنا مۆدێلان...',
+    loadingModels: 'بارکرن...',
     thinking: 'د هزرکرنێ دایە...',
     imageCreated: '✨ وێنە هاتە دروستکرن',
     uploadFileTitle: 'بارکرنا فایل',
@@ -18,7 +19,10 @@ const TRANSLATIONS = {
     fileHeader: '📄 [فایل: ',
     errorPrefix: 'ببورە، ئاریشەیەک چێبوو: ',
     errorDefault: 'پەیوەندی دروست نەبوو',
-    errorConnection: 'خەلەتیەک د گرێدانێ دا چێبوو.'
+    errorConnection: 'خەلەتیەک د گرێدانێ دا چێبوو.',
+    checkBalanceTitle: 'کۆنترۆلا باڵانسی',
+    enterApiKeyPlaceholder: 'کلیلێ خۆ (sk-or-...) ل ڤێرە دابنێ دا باڵانس بهێتە پیشاندان...',
+    hideBalance: 'ڤەشارتنا باڵانسی'
   },
   ar: {
     welcome: 'مرحباً! هذه منصة IPBITS AI Hub. أكثر من 200 نموذج ذكاء اصطناعي عالمي بين يديك. اكتب سؤالك وسأساعدك فوراً.',
@@ -32,7 +36,10 @@ const TRANSLATIONS = {
     fileHeader: '📄 [ملف: ',
     errorPrefix: 'عذراً، حدث خطأ: ',
     errorDefault: 'لم يتم الاتصال بنجاح',
-    errorConnection: 'حدث خطأ في الاتصال بالخادم.'
+    errorConnection: 'حدث خطأ في الاتصال بالخادم.',
+    checkBalanceTitle: 'فحص الرصيد',
+    enterApiKeyPlaceholder: 'ضع مفتاح API الخاص بك لعرض رصيدك المتبقي...',
+    hideBalance: 'إخفاء بطاقة الرصيد'
   },
   en: {
     welcome: 'Hello! Welcome to IPBITS AI Hub. Over 200+ global AI models at your fingertips. Ask anything to get started.',
@@ -46,7 +53,10 @@ const TRANSLATIONS = {
     fileHeader: '📄 [File: ',
     errorPrefix: 'Sorry, an error occurred: ',
     errorDefault: 'Connection failed',
-    errorConnection: 'A network connection error occurred.'
+    errorConnection: 'A network connection error occurred.',
+    checkBalanceTitle: 'Check Balance',
+    enterApiKeyPlaceholder: 'Paste your API key (sk-or-...) to view remaining balance...',
+    hideBalance: 'Hide Balance Card'
   }
 };
 
@@ -115,7 +125,7 @@ function CodeBlock({ code, language }) {
           <button
             type="button"
             onClick={handleCopy}
-            className="flex items-center gap-1 px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition active:scale-95"
+            className="flex items-center gap-1 px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition active:scale-95 cursor-pointer"
           >
             {copied ? <Check className="text-emerald-400" size={13} /> : <Copy size={13} />}
             <span className="text-[10px]">{copied ? 'Copied' : 'Copy'}</span>
@@ -123,7 +133,7 @@ function CodeBlock({ code, language }) {
           <button
             type="button"
             onClick={handleDownload}
-            className="flex items-center gap-1 px-2.5 py-1 bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 border border-purple-500/30 rounded-lg transition active:scale-95"
+            className="flex items-center gap-1 px-2.5 py-1 bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 border border-purple-500/30 rounded-lg transition active:scale-95 cursor-pointer"
           >
             <Download size={13} />
             <span className="text-[10px]">.{getExtension(cleanLang)}</span>
@@ -158,6 +168,7 @@ function renderMessageContent(content) {
 
 export default function ChatPage() {
   const [lang, setLang] = useState('ku');
+  const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const t = TRANSLATIONS[lang] || TRANSLATIONS.ku;
   const isRtl = lang !== 'en';
 
@@ -171,6 +182,10 @@ export default function ChatPage() {
   const [loadingModels, setLoadingModels] = useState(true);
   const [loading, setLoading] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  
+  // باڵانس و کلیلا بکارهێنەری
+  const [userApiKey, setUserApiKey] = useState('');
+  const [showBalanceModal, setShowBalanceModal] = useState(false);
   
   const chatEndRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -192,14 +207,12 @@ export default function ChatPage() {
             }
           });
 
-          // ڕێکخستنا ب ڕێزبەندییا ئەلفوبێ
           paids.sort((a, b) => (a.name || a.id).localeCompare(b.name || b.id));
           frees.sort((a, b) => (a.name || a.id).localeCompare(b.name || b.id));
 
           setFreeModels(frees);
           setPaidModels(paids);
 
-          // دیاریکردنی یەکەم مۆدێلی بەلاش بۆ دەستپێک
           if (frees.length > 0) {
             setModel(frees[0].id);
           } else if (paids.length > 0) {
@@ -221,6 +234,7 @@ export default function ChatPage() {
 
   const handleLangChange = (newLang) => {
     setLang(newLang);
+    setLangDropdownOpen(false);
     if (messages.length === 1 && messages[0].role === 'assistant') {
       setMessages([{ role: 'assistant', content: TRANSLATIONS[newLang].welcome }]);
     }
@@ -299,7 +313,8 @@ export default function ChatPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           messages: apiMessages,
-          model: model
+          model: model,
+          userApiKey: userApiKey || undefined
         })
       });
 
@@ -323,7 +338,8 @@ export default function ChatPage() {
       dir={isRtl ? 'rtl' : 'ltr'} 
       className="min-h-screen w-full max-w-full overflow-x-hidden bg-[#070913] text-white flex flex-col justify-between font-sans selection:bg-purple-600"
     >
-      <header className="border-b border-slate-800/80 bg-slate-950/90 backdrop-blur-md px-3 sm:px-6 py-2.5 flex items-center justify-between sticky top-0 z-20 gap-2 w-full max-w-full">
+      {/* هێدەرێ ستاندارد دگەل مینیویا زمانان و باڵانسی */}
+      <header className="border-b border-slate-800/80 bg-slate-950/90 backdrop-blur-md px-3 sm:px-6 py-2.5 flex items-center justify-between sticky top-0 z-30 gap-2 w-full max-w-full">
         <div className="flex items-center gap-2 shrink-0">
           <div className="w-8 h-8 sm:w-9 sm:h-9 bg-purple-600/20 border border-purple-500/30 rounded-xl flex items-center justify-center shadow-lg shadow-purple-900/20 shrink-0">
             <Sparkles className="text-purple-400" size={16} />
@@ -333,39 +349,74 @@ export default function ChatPage() {
           </span>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
-          <div className="flex items-center gap-1 bg-slate-900 border border-slate-800 p-1 rounded-xl">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          
+          {/* دوگمەیا پیشاندانا باڵانسی */}
+          <button
+            type="button"
+            onClick={() => setShowBalanceModal(!showBalanceModal)}
+            className="flex items-center gap-1 bg-slate-900 hover:bg-slate-800 border border-purple-500/30 text-purple-300 px-2.5 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold transition-all cursor-pointer shadow-sm"
+            title={t.checkBalanceTitle}
+          >
+            <Wallet size={13} className="text-purple-400" />
+            <span className="hidden sm:inline">{t.checkBalanceTitle}</span>
+          </button>
+
+          {/* مینیویا بچووک یا زمانان (Dropdown) */}
+          <div className="relative">
             <button
               type="button"
-              onClick={() => handleLangChange('ku')}
-              className={`px-2 py-0.5 text-[10px] sm:text-xs rounded-lg transition-all ${
-                lang === 'ku' ? 'bg-purple-600 text-white font-bold' : 'text-slate-400 hover:text-white'
-              }`}
+              onClick={() => setLangDropdownOpen(!langDropdownOpen)}
+              className="flex items-center gap-1 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 px-2 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold transition-all cursor-pointer"
             >
-              کوردى
+              <Globe size={13} className="text-purple-400" />
+              <span>{lang === 'ku' ? 'کوردی' : lang === 'ar' ? 'العربية' : 'EN'}</span>
+              <ChevronDown size={11} className={`text-slate-400 transition-transform ${langDropdownOpen ? 'rotate-180' : ''}`} />
             </button>
-            <button
-              type="button"
-              onClick={() => handleLangChange('ar')}
-              className={`px-2 py-0.5 text-[10px] sm:text-xs rounded-lg transition-all ${
-                lang === 'ar' ? 'bg-purple-600 text-white font-bold' : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              عربي
-            </button>
-            <button
-              type="button"
-              onClick={() => handleLangChange('en')}
-              className={`px-2 py-0.5 text-[10px] sm:text-xs rounded-lg transition-all ${
-                lang === 'en' ? 'bg-purple-600 text-white font-bold' : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              EN
-            </button>
+
+            {langDropdownOpen && (
+              <div 
+                className={`absolute top-full mt-1.5 bg-[#0c1022] border border-slate-800 rounded-xl shadow-2xl p-1 z-50 flex flex-col gap-0.5 min-w-[100px] backdrop-blur-xl ${
+                  isRtl ? 'right-0' : 'left-0'
+                }`}
+              >
+                <button
+                  type="button"
+                  onClick={() => handleLangChange('ku')}
+                  className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
+                    lang === 'ku' ? 'bg-purple-600/30 text-purple-300' : 'text-slate-300 hover:bg-slate-900 hover:text-white'
+                  }`}
+                >
+                  <span>کوردی</span>
+                  {lang === 'ku' && <Check size={11} className="text-purple-400" />}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleLangChange('ar')}
+                  className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
+                    lang === 'ar' ? 'bg-purple-600/30 text-purple-300' : 'text-slate-300 hover:bg-slate-900 hover:text-white'
+                  }`}
+                >
+                  <span>العربية</span>
+                  {lang === 'ar' && <Check size={11} className="text-purple-400" />}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleLangChange('en')}
+                  className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
+                    lang === 'en' ? 'bg-purple-600/30 text-purple-300' : 'text-slate-300 hover:bg-slate-900 hover:text-white'
+                  }`}
+                >
+                  <span>English</span>
+                  {lang === 'en' && <Check size={11} className="text-purple-400" />}
+                </button>
+              </div>
+            )}
           </div>
 
+          {/* هەلبژارتنا مۆدێلان */}
           {loadingModels ? (
-            <div className="flex items-center gap-1 text-[11px] text-purple-300 bg-slate-900 px-2.5 py-1.5 rounded-xl border border-slate-800">
+            <div className="flex items-center gap-1 text-[11px] text-purple-300 bg-slate-900 px-2 py-1.5 rounded-xl border border-slate-800">
               <Loader2 size={12} className="animate-spin text-purple-400" />
               <span>{t.loadingModels}</span>
             </div>
@@ -373,9 +424,8 @@ export default function ChatPage() {
             <select
               value={model}
               onChange={(e) => setModel(e.target.value)}
-              className="bg-slate-900 border border-slate-700 text-[11px] sm:text-xs rounded-xl px-2 py-1.5 text-purple-300 focus:outline-none focus:border-purple-500 cursor-pointer max-w-[130px] sm:max-w-xs truncate"
+              className="bg-slate-900 border border-slate-700 text-[11px] sm:text-xs rounded-xl px-2 py-1.5 text-purple-300 focus:outline-none focus:border-purple-500 cursor-pointer max-w-[125px] sm:max-w-xs truncate"
             >
-              {/* کۆمەڵا مۆدێلێن بێ بەرامبەر */}
               {freeModels.length > 0 && (
                 <optgroup label={lang === 'ar' ? '🎁 نماذج مجانية' : lang === 'en' ? '🎁 Free Models' : '🎁 مۆدێلێن بێ بەرامبەر'}>
                   {freeModels.map((m) => (
@@ -386,7 +436,6 @@ export default function ChatPage() {
                 </optgroup>
               )}
 
-              {/* کۆمەڵا مۆدێلێن پێشکەفتی یێن VIP بۆ فرۆشتنێ (پتر ژ ٢٠٠ مۆدێلان) */}
               {paidModels.length > 0 && (
                 <optgroup label={lang === 'ar' ? '⚡ نماذج VIP المتقدمة (+200)' : lang === 'en' ? '⚡ VIP Models (+200)' : '⚡ مۆدێلێن VIP یێن پێشکەفتی (+200)'}>
                   {paidModels.map((m) => (
@@ -401,7 +450,38 @@ export default function ChatPage() {
         </div>
       </header>
 
+      {/* بەشێ چات و کارتا باڵانسی */}
       <main className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-4 max-w-4xl w-full mx-auto">
+        
+        {/* کارتا پشکنینا باڵانسی (دەردکەڤیت دەمێ کڕیار ل سەر دوگمەیا باڵانسی دگریت) */}
+        {showBalanceModal && (
+          <div className="bg-[#0c1022]/95 border border-purple-500/40 rounded-2xl p-4 shadow-2xl backdrop-blur-md mb-4 transition-all">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <KeyRound className="text-purple-400" size={16} />
+                <h4 className="text-xs sm:text-sm font-bold text-white">{t.checkBalanceTitle}</h4>
+              </div>
+              <button 
+                type="button" 
+                onClick={() => setShowBalanceModal(false)}
+                className="text-slate-400 hover:text-white text-xs cursor-pointer"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <input
+              type="password"
+              value={userApiKey}
+              onChange={(e) => setUserApiKey(e.target.value.trim())}
+              placeholder={t.enterApiKeyPlaceholder}
+              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-purple-300 placeholder-slate-500 focus:outline-none focus:border-purple-500 mb-3"
+            />
+
+            {userApiKey && <UserBalanceCard apiKey={userApiKey} />}
+          </div>
+        )}
+
         {messages.map((m, idx) => (
           <div
             key={idx}
@@ -449,29 +529,28 @@ export default function ChatPage() {
         ))}
 
         {loading && (
-  <div className="flex items-center gap-2.5 flex-row-reverse">
-    {/* بازنەیا لۆگۆیێ IPBITS */}
-    <div className="w-8 h-8 rounded-full bg-purple-950/60 border border-purple-500/50 flex items-center justify-center shrink-0 overflow-hidden shadow-lg shadow-purple-900/40 p-1">
-      <img 
-        src="/logo.png" 
-        alt="IPBITS AI" 
-        className="w-full h-full object-contain rounded-full animate-pulse" 
-      />
-    </div>
+          <div className="flex items-center gap-2.5 flex-row-reverse">
+            <div className="w-8 h-8 rounded-full bg-purple-950/60 border border-purple-500/50 flex items-center justify-center shrink-0 overflow-hidden shadow-lg shadow-purple-900/40 p-1">
+              <img 
+                src="/logo.png" 
+                alt="IPBITS AI" 
+                className="w-full h-full object-contain rounded-full animate-pulse" 
+              />
+            </div>
 
-    {/* کپسولا پەیامێ د هزرکرنێ دایە */}
-    <div className="bg-slate-900/90 border border-slate-800 px-3.5 py-2 rounded-2xl text-xs text-purple-300 flex items-center gap-2 shadow-md">
-      <span className="relative flex h-2 w-2">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
-        <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
-      </span>
-      <span>{t.thinking}</span>
-    </div>
-  </div>
-)}
+            <div className="bg-slate-900/90 border border-slate-800 px-3.5 py-2 rounded-2xl text-xs text-purple-300 flex items-center gap-2 shadow-md">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
+              </span>
+              <span>{t.thinking}</span>
+            </div>
+          </div>
+        )}
         <div ref={chatEndRef} />
       </main>
 
+      {/* فۆرمێ نڤیسینێ و بارکرنێ */}
       <footer className="p-2.5 sm:p-4 border-t border-slate-800/80 bg-slate-950/90 backdrop-blur-md sticky bottom-0 z-20 w-full">
         {selectedImage && (
           <div className="max-w-4xl mx-auto mb-2 relative inline-block">
@@ -483,7 +562,7 @@ export default function ChatPage() {
             <button
               type="button"
               onClick={clearImage}
-              className="absolute -top-2 -right-2 bg-rose-600 text-white rounded-full p-0.5 hover:bg-rose-500 transition-colors"
+              className="absolute -top-2 -right-2 bg-rose-600 text-white rounded-full p-0.5 hover:bg-rose-500 transition-colors cursor-pointer"
             >
               <X size={12} />
             </button>
